@@ -3,6 +3,7 @@
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Illuminate\Session\SessionManager;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SessionListener implements EventSubscriberInterface
@@ -24,18 +25,33 @@ class SessionListener implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        // High priority in order to supersede other listeners
-        return array(FormEvents::PRE_SET_DATA => array('preBind', 128));
+        return array(
+            FormEvents::PRE_SET_DATA => 'preSet',
+        );
     }
 
-    public function preBind(FormEvent $event)
+    public function preSet(FormEvent $event)
     {
         $form = $event->getForm();
         $name = $form->getConfig()->getName();
 
+        // Add input from the previous submit
         if ($this->session->hasOldInput($name)) {
             $event->setData($this->session->getOldInput($name));
         }
 
+        // Check if the session has any errors
+        if ( $name == null && $this->session->has('errors')) {
+            /** @var \Illuminate\Support\ViewErrorBag $errors */
+            $errors = $this->session->get('errors');
+
+            foreach ($errors->getMessages() as $name => $messages) {
+                // When the form doesn't have the field, add a global error
+                $field = $form->has($name) ? $form->get($name) : $form;
+                $field->addError(new FormError(
+                    implode(' ', $messages)
+                ));
+            }
+        }
     }
 }
