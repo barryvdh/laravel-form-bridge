@@ -1,3 +1,44 @@
 ## Laravel Form Bridge
 
-Work in progress..
+For Laravel 5.0, requires a configured [TwigBridge](https://github.com/rcrowe/TwigBridge) or similar laravel package that registers `app('twig')`.
+
+Features:
+ - [x] Set up basic extensions 
+ - [x] Pre-set old input
+ - [x] Add validation errors
+ - [ ] Add plain/blade rendering?
+ - [ ] Pre-set HTML5 validation attributes based on rules?
+ - [ ] Translate field names
+ - [ ] Test it 
+
+### Install
+Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev"`, add `Barryvdh\Form\ServiceProvider` to you ServiceProviders.
+
+### Basic example
+
+```php
+Route::any('form', function(\Illuminate\Http\Request $request){
+    $user = App\User::first();
+    
+    $form = app('form.factory')->createNamedBuilder(null, 'form', $user)
+        ->add('name', 'text')
+        ->add('email', 'email')
+        ->add('save', 'submit', array('label' => 'Save user'))
+        ->getForm();
+
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted()) {
+        $v = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+        ]);
+
+        if ($v->fails()) {
+            return redirect()->back()->withInput()->withErrors($v->errors());
+        }
+    }
+
+    return view('form', ['form' => $form->createView()]);
+});
+```
