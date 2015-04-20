@@ -49,8 +49,7 @@ class ServiceProvider extends BaseServiceProvider {
             return new TwigRenderer($app['twig.form.engine']);
         });
 
-
-        $this->app->bind('form.factory' ,function ($app) {
+        $this->app->bind('form.factory', function($app) {
             $csrfExtension = $app->make('Barryvdh\Form\Extension\SessionExtension');
 
             return Forms::createFormFactoryBuilder()
@@ -58,8 +57,11 @@ class ServiceProvider extends BaseServiceProvider {
                 ->addExtension(new HttpFoundationExtension())
                 ->getFormFactory();
         });
-	}
 
+        $this->app->bind('form.builder', function($app) {
+            return new Builder($app['form.factory']);
+        });
+	}
 
 	/**
 	 * Get the services provided by the provider.
@@ -68,7 +70,6 @@ class ServiceProvider extends BaseServiceProvider {
 	 */
 	public function provides()
 	{
-		return array('form.factory', 'twig.form.engine', 'twig.form.renderer');
+		return array('form.factory', 'form.builder', 'twig.form.engine', 'twig.form.renderer');
 	}
-
 }

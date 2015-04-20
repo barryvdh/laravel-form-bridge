@@ -22,7 +22,7 @@ Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev"`, add `Barryvdh\Fo
 Route::any('form', function(\Illuminate\Http\Request $request){
     $user = App\User::first();
     
-    $form = app('form.factory')->createNamedBuilder(null, 'form', $user)
+    $form = app('form.builder')->build($user)
         ->add('name', 'text')
         ->add('email', 'email')
         ->add('save', 'submit', array('label' => 'Save user'))
