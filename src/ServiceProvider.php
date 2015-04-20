@@ -25,6 +25,8 @@ class ServiceProvider extends BaseServiceProvider {
         $this->publishes([
             $viewPath => base_path('resources/views/vendor/form'),
         ], 'views');
+
+        $this->app['twig']->addExtension(new FormExtension($this->app['twig.form.renderer']));
     }
 
 	/**
@@ -37,16 +39,22 @@ class ServiceProvider extends BaseServiceProvider {
         $configPath = __DIR__ . '/../config/form.php';
         $this->mergeConfigFrom($configPath, 'form');
 
-        $this->app->bind('form.factory' ,function ($app) {
-            $twig = $app['twig'];
+        $this->app->bind('twig.form.engine', function ($app) {
             $theme = $app['config']->get('form.theme', 'bootstrap_3_layout');
-            
-            $formEngine = new TwigRendererEngine(array('form::'.theme));
-            $formEngine->setEnvironment($twig);
-            $twig->addExtension(new FormExtension(new TwigRenderer($formEngine)));
+            return new TwigRendererEngine(array('form::'.$theme));
+        });
+
+        $this->app->bind('twig.form.renderer', function ($app) {
+            return new TwigRenderer($app['twig.form.engine']);
+        });
+
+
+        $this->app->bind('form.factory' ,function ($app) {
+            $csrfExtension = $app->make('Barryvdh\Form\Extension\SessionExtension');
 
             return Forms::createFormFactoryBuilder()
-              ->getFormFactory();
+                ->addExtension($csrfExtension)
+                ->getFormFactory();
         });
 	}
 
@@ -58,7 +66,7 @@ class ServiceProvider extends BaseServiceProvider {
 	 */
 	public function provides()
 	{
-		return array('form.factory');
+		return array('form.factory', 'twig.form.engine', 'twig.form.renderer');
 	}
 
 }
