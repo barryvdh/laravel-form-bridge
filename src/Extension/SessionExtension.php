@@ -31,6 +31,7 @@ class SessionExtension extends AbstractExtension
     {
         return array(
             new Type\CsrfTypeExtension($this->session),
+            new Type\SessionTypeExtension($this->session),
         );
     }
 }

@@ -5,6 +5,7 @@ use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 
 class ServiceProvider extends BaseServiceProvider {
 
@@ -54,6 +55,7 @@ class ServiceProvider extends BaseServiceProvider {
 
             return Forms::createFormFactoryBuilder()
                 ->addExtension($csrfExtension)
+                ->addExtension(new HttpFoundationExtension())
                 ->getFormFactory();
         });
 	}
