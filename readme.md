@@ -1,5 +1,7 @@
 ## Laravel Form Bridge
 
+> _Note:_ This package is still work-in-progress. Don't use this in production yet.
+
 For Laravel 5.0, requires a configured [TwigBridge](https://github.com/rcrowe/TwigBridge) or similar laravel package that registers `app('twig')`.
 
 Features:
@@ -42,3 +44,13 @@ Route::any('form', function(\Illuminate\Http\Request $request){
     return view('form', ['form' => $form->createView()]);
 });
 ```
+
+Use the following in your twig templates to render the view:
+
+```twig
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+```
+
+See http://symfony.com/doc/current/book/forms.html for more information.
