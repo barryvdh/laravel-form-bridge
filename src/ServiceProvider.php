@@ -56,10 +56,6 @@ class ServiceProvider extends BaseServiceProvider {
                 ->addExtension(new HttpFoundationExtension())
                 ->getFormFactory();
         });
-
-        $this->app->bind('form.builder', function($app) {
-            return new Builder($app['form.factory']);
-        });
     }
 
     /**
