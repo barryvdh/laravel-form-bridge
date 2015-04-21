@@ -37,7 +37,7 @@ class CsrfTypeExtension extends AbstractTypeExtension{
             $csrfForm = $factory->createNamed('_token', 'hidden', $token, array(
                 'mapped' => false,
             ));
-            $view->children['_token'] = $csrfForm->createView($view);
+            $view->children['_token'] = $csrfForm->createView(null);
         }
 
     }

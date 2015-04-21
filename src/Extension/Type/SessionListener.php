@@ -34,14 +34,15 @@ class SessionListener implements EventSubscriberInterface
     {
         $form = $event->getForm();
         $name = $form->getConfig()->getName();
+        $compound = $form->getConfig()->getCompound();
 
         // Add input from the previous submit
-        if ($this->session->hasOldInput($name)) {
+        if ( ! $compound && $name !== '_token' && $this->session->hasOldInput($name)) {
             $event->setData($this->session->getOldInput($name));
         }
 
         // Check if the session has any errors
-        if ( $name == null && $this->session->has('errors')) {
+        if ($compound &&  $this->session->has('errors')) {
             /** @var \Illuminate\Support\ViewErrorBag $errors */
             $errors = $this->session->get('errors');
 

@@ -22,7 +22,7 @@ Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev"`, add `Barryvdh\Fo
 Route::any('form', function(\Illuminate\Http\Request $request){
     $user = App\User::first();
     
-    $form = app('form.builder')->build($user)
+    $form = app('form.factory')->createBuilder('form', $user)
         ->add('name', 'text')
         ->add('email', 'email')
         ->add('save', 'submit', array('label' => 'Save user'))
@@ -31,7 +31,7 @@ Route::any('form', function(\Illuminate\Http\Request $request){
     $form->handleRequest($request);
 
     if ($form->isSubmitted()) {
-        $v = Validator::make($request->all(), [
+        $v = Validator::make($request->get($form->getName()), [
             'name' => 'required',
             'email' => 'required|email',
         ]);
@@ -39,6 +39,9 @@ Route::any('form', function(\Illuminate\Http\Request $request){
         if ($v->fails()) {
             return redirect()->back()->withInput()->withErrors($v->errors());
         }
+        
+        // Save the user with the new mapped data
+        $user->save();
     }
 
     return view('form', ['form' => $form->createView()]);
