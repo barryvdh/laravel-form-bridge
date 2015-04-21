@@ -24,6 +24,8 @@ You can use `$form->handleRequest($request);` to update the values in the user, 
 However, by default, the form is grouped under a `form` key, so you have to use `$request->get('form')` to get the form values.
 Or you can create a Named form, with an empty name.
 
+If you need to set more options, use the `createBuilder` function instead of `create`, to be able to use `setAction()` etc. You need to call `->getForm()`  to get the actual form instance again.
+
 ```php
 Route::any('form', function(\Illuminate\Http\Request $request){
     $user = App\User::first();
