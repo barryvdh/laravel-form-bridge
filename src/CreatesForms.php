@@ -26,7 +26,7 @@ trait CreatesForms {
 	 *
 	 * @return \Symfony\Component\Form\Form
 	 */
-	public function createNamed($name = '', $type = 'form', $data = null, array $options = array())
+	public function createNamed($name, $type = 'form', $data = null, array $options = array())
 	{
 		return $this->getFormFactory()->createNamed($name, $type, $data, $options);
 	}
@@ -41,7 +41,7 @@ trait CreatesForms {
 	 */
 	public function createFormBuilder($data = null, array $options = array())
 	{
-		return $this->getFormFactory()->createBuilder('form', $data, $options);
+		return $this->getFormFactory()->createBuilder('', $data, $options);
 	}
 
 	/**

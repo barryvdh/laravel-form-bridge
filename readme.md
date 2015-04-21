@@ -69,6 +69,16 @@ See http://symfony.com/doc/current/book/forms.html#form-rendering-template for m
 
 To make it easier to use in a Controller, you can use 2 traits:
 
+ValidatesForms: Adds a validation method, similar to the ValidatesRequests trait:
+`$this->validateForm($form, $request, $rules)`
+
+CreatesForms: Create a Form or FormBuilder:
+ - createForm($type, $data, $options) -> Form for a type (`form` or a Type class)
+ - createNamed($name, $type, $data, $options) -> Form with a given name
+ - createFormBuilder($data, $options) -> FormBuilder with an empty name
+ - createNamedFormBuilder($name, $data, $options) -> FormBuilder with a given name
+
+ 
 ```php
 use Barryvdh\Form\ValidatesForms;
 use Barryvdh\Form\CreatesForms;
@@ -81,10 +91,11 @@ class UserController extends Controller{
 	{
 		$user = User::first();
 
-        $form = $this->createForm('form', $user)
+        $form = $this->createFormBuilder($user)
             ->add('name', 'text')
             ->add('email', 'email')
-            ->add('save', 'submit', array('label' => 'Save user'));
+            ->add('save', 'submit', array('label' => 'Save user'))
+            ->getForm();
 
 		$form->handleRequest($request);
 
@@ -107,7 +118,7 @@ Creating a named form:
 
 ```php
         
-$form = $this->createNamed('', 'form', $user) 
+$form = $this->createNamed('user', 'form', $user) 
   ->add('name', 'text')
   ->add('email', 'email')
   ->add('save', 'submit', array('label' => 'Save user'));
