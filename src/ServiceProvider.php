@@ -9,40 +9,39 @@ use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 
 class ServiceProvider extends BaseServiceProvider {
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
 
     public function boot()
     {
         $configPath = __DIR__ . '/../config/form.php';
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
-        $viewPath = __DIR__.'/../resources/views';
-        $this->loadViewsFrom($viewPath, 'form');
-        $this->publishes([
-            $viewPath => base_path('resources/views/vendor/form'),
-        ], 'views');
+        // Add the Form templates to the Twig Chain Loader
+        $reflected = new \ReflectionClass('Symfony\Bridge\Twig\Extension\FormExtension');
+        $path = dirname($reflected->getFileName()).'/../Resources/views/Form';
+        $this->app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($path));
 
         $this->app['twig']->addExtension(new FormExtension($this->app['twig.form.renderer']));
     }
 
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
         $configPath = __DIR__ . '/../config/form.php';
         $this->mergeConfigFrom($configPath, 'form');
 
         $this->app->bind('twig.form.engine', function ($app) {
-            $theme = $app['config']->get('form.theme', 'bootstrap_3_layout');
-            return new TwigRendererEngine(array('form::'.$theme));
+            $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
+            return new TwigRendererEngine($theme);
         });
 
         $this->app->bind('twig.form.renderer', function ($app) {
@@ -61,15 +60,15 @@ class ServiceProvider extends BaseServiceProvider {
         $this->app->bind('form.builder', function($app) {
             return new Builder($app['form.factory']);
         });
-	}
+    }
 
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array('form.factory', 'form.builder', 'twig.form.engine', 'twig.form.renderer');
-	}
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array('form.factory', 'form.builder', 'twig.form.engine', 'twig.form.renderer');
+    }
 }
