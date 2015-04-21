@@ -18,6 +18,12 @@ Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev"`, add `Barryvdh\Fo
 
 ### Basic example
 
+You can use the FormFactory to create a form. You can supply a Model as data, so it will fill the values.
+
+You can use `$form->handleRequest($request);` to update the values in the user, or you can just use `$request` object or `Input` facade like usual.
+However, by default, the form is grouped under a `form` key, so you have to use `$request->get('form')` to get the form values.
+Or you can create a Named form, with an empty name.
+
 ```php
 Route::any('form', function(\Illuminate\Http\Request $request){
     $user = App\User::first();
@@ -54,6 +60,8 @@ Use the following in your twig templates to render the view:
 {{ form_widget(form) }}
 {{ form_end(form) }}
 ```
+
+See http://symfony.com/doc/current/book/forms.html#form-rendering-template for more options.
 
 ## Traits
 
@@ -93,7 +101,7 @@ class UserController extends Controller{
 }
 ```
 
-By default, a group key for the form gets added, so fields a `form[name]` instead of `name`. You can create a NamedBuilder with empty name to prevent this.
+Creating a named form:
 
 ```php
         
