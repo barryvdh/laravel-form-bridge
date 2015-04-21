@@ -36,22 +36,19 @@ class SessionListener implements EventSubscriberInterface
         $name = $form->getConfig()->getName();
         $compound = $form->getConfig()->getCompound();
 
-        // Add input from the previous submit
-        if ( ! $compound && $name !== '_token' && $this->session->hasOldInput($name)) {
-            $event->setData($this->session->getOldInput($name));
-        }
+        if ( ! $compound && $parent = $form->getParent()){
+            $dotted = $parent->getName() ? $parent->getName() . '.' . $name : $name;
+            // Add input from the previous submit
+            if ($name !== '_token' && $this->session->hasOldInput($dotted)) {
+                $event->setData($this->session->getOldInput($dotted));
+            }
 
-        // Check if the session has any errors
-        if ($compound &&  $this->session->has('errors')) {
-            /** @var \Illuminate\Support\ViewErrorBag $errors */
-            $errors = $this->session->get('errors');
-
-            foreach ($errors->getMessages() as $name => $messages) {
-                // When the form doesn't have the field, add a global error
-                $field = $form->has($name) ? $form->get($name) : $form;
-                $field->addError(new FormError(
-                    implode(' ', $messages)
-                ));
+            if ($this->session->has('errors')) {
+                /** @var \Illuminate\Support\ViewErrorBag $errors */
+                $errors = $this->session->get('errors');
+                if ($errors->has($name)) {
+                    $form->addError(new FormError(implode(' ', $errors->get($name))));
+                }
             }
         }
     }
