@@ -56,6 +56,7 @@ class ServiceProvider extends BaseServiceProvider {
                 ->addExtension(new HttpFoundationExtension())
                 ->getFormFactory();
         });
+        $this->app->alias('form.factory', 'Symfony\Component\Form\FormFactoryInterface');
     }
 
     /**
@@ -65,6 +66,6 @@ class ServiceProvider extends BaseServiceProvider {
      */
     public function provides()
     {
-        return array('form.factory', 'form.builder', 'twig.form.engine', 'twig.form.renderer');
+        return array('Symfony\Component\Form\FormFactoryInterface', 'form.factory', 'twig.form.engine', 'twig.form.renderer');
     }
 }
