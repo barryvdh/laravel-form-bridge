@@ -22,11 +22,10 @@ Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev"`, add `Barryvdh\Fo
 Route::any('form', function(\Illuminate\Http\Request $request){
     $user = App\User::first();
     
-    $form = app('form.factory')->createBuilder('form', $user)
+    $form = app('form.factory')->create('form', $user)
         ->add('name', 'text')
         ->add('email', 'email')
-        ->add('save', 'submit', array('label' => 'Save user'))
-        ->getForm();
+        ->add('save', 'submit', array('label' => 'Save user'));
 
     $form->handleRequest($request);
 
@@ -54,6 +53,54 @@ Use the following in your twig templates to render the view:
 {{ form_start(form) }}
 {{ form_widget(form) }}
 {{ form_end(form) }}
+```
+
+## Traits
+
+To make it easier to use in a Controller, you can use 2 traits:
+
+```php
+use Barryvdh\Form\ValidatesForms;
+use Barryvdh\Form\CreatesForms;
+
+class UserController extends Controller{
+
+    use ValidatesForms, CreatesForms;
+    
+    public function anyIndex(Request $request)
+	{
+		$user = User::first();
+
+        $form = $this->createForm('form', $user)
+            ->add('name', 'text')
+            ->add('email', 'email')
+            ->add('save', 'submit', array('label' => 'Save user'));
+
+		$form->handleRequest($request);
+
+		if ($form->isSubmitted()) {
+
+			$this->validateForm($form, $request, [
+			  'name' => 'required',
+			  'email' => 'required|email',
+			]);
+
+			$user->save();
+		}
+
+		return view('user', ['form' => $form->createView()]);
+	}    
+}
+```
+
+By default, a group key for the form gets added, so fields a `form[name]` instead of `name`. You can create a NamedBuilder with empty name to prevent this.
+
+```php
+        
+$form = $this->createNamed('', 'form', $user) 
+  ->add('name', 'text')
+  ->add('email', 'email')
+  ->add('save', 'submit', array('label' => 'Save user'));
 ```
 
 See http://symfony.com/doc/current/book/forms.html for more information.
