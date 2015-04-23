@@ -5,6 +5,7 @@ use Symfony\Bridge\Twig\Extension\FormExtension as SymfonyFormExtension;
 class FormExtension extends SymfonyFormExtension
 {
 	/**
+	 * If the $intention is null, use the Laravel CSRF token.
 	 *
 	 * {@inheritdoc}
 	 */
@@ -17,4 +18,3 @@ class FormExtension extends SymfonyFormExtension
 		return parent::renderCsrfToken($intention);
 	}
 }
-
