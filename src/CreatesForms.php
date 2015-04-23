@@ -41,7 +41,7 @@ trait CreatesForms {
 	 */
 	public function createFormBuilder($data = null, array $options = array())
 	{
-		return $this->getFormFactory()->createBuilder('', $data, $options);
+		return $this->getFormFactory()->createNamedBuilder('', 'form', $data, $options);
 	}
 
 	/**
