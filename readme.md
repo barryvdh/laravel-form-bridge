@@ -125,3 +125,65 @@ $form = $this->createNamed('user', 'form', $user)
 ```
 
 See http://symfony.com/doc/current/book/forms.html for more information.
+
+## Uploading Files
+
+You can use the `file` type in the FormBuilder, and use the magic `getFile()` and `setFile()` method on your Model or mark it as not mapped, so you can handle it yourself. See http://symfony.com/doc/current/cookbook/doctrine/file_uploads.html
+
+```php
+Class User extends Model {
+
+	/** @var UploadedFile  */
+	private $file;
+	
+	public function getFile()
+	{
+		return $this->file;
+	}
+	
+	public function setFile(UploadedFile $file = null)
+	{
+		$this->file = $file;
+	}
+	
+	public function upload()
+	{
+		    // the file property can be empty if the field is not required
+		    if (null === $this->getFile()) {
+		        return;
+		    }
+		
+		    // use the original file name here but you should
+		    // sanitize it at least to avoid any security issues
+		
+		    // move takes the target directory and then the
+		    // target filename to move to
+		    $this->getFile()->move(
+		        $this->getUploadRootDir(),
+		        $this->getFile()->getClientOriginalName()
+		    );
+		
+		    // set the path property to the filename where you've saved the file
+		    $this->path = $this->getFile()->getClientOriginalName();
+		
+		    // clean up the file property as you won't need it anymore
+		    $this->file = null;
+	}
+}
+```
+
+```php
+$user = User::first();
+
+$form = $this->createFormBuilder($user)
+    ->add('name', 'text')
+    ->add('file', 'file')
+    ->add('save', 'submit', array('label' => 'Save user'))
+    ->getForm();
+    
+ $form->handleRequest($request);
+ 
+ if ($form->isValid()) {
+  	$user->upload();
+        $user->save();
+}
