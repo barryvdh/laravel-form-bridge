@@ -8,9 +8,9 @@ Features:
  - [x] Set up basic extensions 
  - [x] Pre-set old input
  - [x] Add validation errors
+ - [x] Translate field names
  - [ ] Add plain/blade rendering?
  - [ ] Pre-set HTML5 validation attributes based on rules?
- - [ ] Translate field names
  - [ ] Test it 
 
 ### Install
@@ -152,6 +152,14 @@ if ($form->isSubmitted()) {
 ```
 
 The `belongs_to_many` type extends the [choice type](http://symfony.com/doc/current/reference/forms/types/choice.html), but is `multiple` by default.
+
+## Translation labels
+
+If you want to translate your labels automatically, just pass the translation key as the `label` attribute. It will run throught Twig's `trans` filter.
+
+```php
+->add('name', 'text', ['label' => 'fields.name'])
+```
 
 ## Uploading Files
 
