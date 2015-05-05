@@ -2,6 +2,7 @@
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class BelongsToManyType extends AbstractType {
 
@@ -11,6 +12,13 @@ class BelongsToManyType extends AbstractType {
           ->addModelTransformer(new BelongsToManyTransformer())
           ->addEventSubscriber(new BelongsToManyListener())
         ;
+    }
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+          'multiple' => true
+        ]);
     }
 
     public function getParent()
