@@ -135,6 +135,7 @@ BelongsToMany behaves differently, because it isn't an actual attribute on your 
 $builder
 ->add('users', 'belongs_to_many', [
     'choices' => \App\User::lists('name', 'id'),
+    'expanded' => true, // true=checkboxes, false=multi select
 ]);
 ```
 
@@ -149,6 +150,8 @@ if ($form->isSubmitted()) {
     return redirect()->back();
 }
 ```
+
+The `belongs_to_many` type extends the [choice type](http://symfony.com/doc/current/reference/forms/types/choice.html), but is `multiple` by default.
 
 ## Uploading Files
 
