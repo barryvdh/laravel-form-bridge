@@ -1,4 +1,4 @@
-<?php namespace Barryvdh\Form\Extension\Type;
+<?php namespace Barryvdh\Form\Extension\Session;
 
 use Illuminate\Session\SessionManager;
 use Symfony\Component\Form\FormBuilderInterface;

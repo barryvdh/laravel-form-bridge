@@ -1,4 +1,4 @@
-<?php namespace Barryvdh\Form\Extension\Type;
+<?php namespace Barryvdh\Form\Extension\Session;
 
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;

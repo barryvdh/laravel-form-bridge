@@ -30,8 +30,8 @@ class SessionExtension extends AbstractExtension
     protected function loadTypeExtensions()
     {
         return array(
-            new Type\CsrfTypeExtension($this->session),
-            new Type\SessionTypeExtension($this->session),
+            new Session\CsrfTypeExtension($this->session),
+            new Session\SessionTypeExtension($this->session),
         );
     }
 }
