@@ -135,7 +135,6 @@ BelongsToMany behaves differently, because it isn't an actual attribute on your 
 $builder
 ->add('users', 'belongs_to_many', [
     'choices' => \App\User::lists('name', 'id'),
-    'multiple' => true,
 ]);
 ```
 
