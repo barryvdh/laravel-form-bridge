@@ -14,7 +14,9 @@ Features:
  - [ ] Test it 
 
 ### Install
-Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev"`, add `Barryvdh\Form\ServiceProvider` to you ServiceProviders.
+ - Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev",`
+ - Add `'Barryvdh\Form\ServiceProvider',` to you ServiceProviders.
+ - (optional) Add `'FormFactory' => 'Barryvdh\Form\Facade\FormFactory',` to your Facades.
 
 ### Basic example
 
