@@ -1,5 +1,6 @@
 <?php namespace Barryvdh\Form;
 
+use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Component\Form\Forms;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
@@ -54,6 +55,7 @@ class ServiceProvider extends BaseServiceProvider {
             return Forms::createFormFactoryBuilder()
                 ->addExtension($csrfExtension)
                 ->addExtension(new HttpFoundationExtension())
+                ->addExtension(new EloquentExtension())
                 ->getFormFactory();
         });
         $this->app->alias('form.factory', 'Symfony\Component\Form\FormFactoryInterface');

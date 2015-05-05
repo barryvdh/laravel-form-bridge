@@ -125,6 +125,29 @@ $form = $this->createNamed('user', 'form', $user)
 ```
 
 See http://symfony.com/doc/current/book/forms.html for more information.
+## BelongsToMany relations
+
+BelongsToMany behaves differently, because it isn't an actual attribute on your model. Instead, we can use the custom `belongs_to_many` type to fill the Form and sync it manually.
+
+```php
+$builder
+->add('users', 'belongs_to_many', [
+    'choices' => \App\User::lists('name', 'id'),
+    'multiple' => true,
+]);
+```
+
+```php
+$form->handleRequest($request);
+if ($form->isSubmitted()) {
+    $this->validate($request, $rules);
+
+    $item->save();
+    $item->users()->sync($request->get('users'));
+
+    return redirect()->back();
+}
+```
 
 ## Uploading Files
 
