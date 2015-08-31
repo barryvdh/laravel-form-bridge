@@ -14,7 +14,7 @@
         "illuminate/support": "5.0.x|5.1.x",
         "symfony/form": "~2.6",
         "symfony/twig-bridge": "~2.6",
-        "rcrowe/twigbridge": "0.7.*"
+        "rcrowe/twigbridge": "0.7.*|0.8.*"
     },
     "autoload": {
         "psr-4": {
