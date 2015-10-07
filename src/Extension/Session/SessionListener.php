@@ -1,5 +1,6 @@
 <?php namespace Barryvdh\Form\Extension\Session;
 
+use Carbon\Carbon;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Illuminate\Session\SessionManager;
@@ -39,7 +40,14 @@ class SessionListener implements EventSubscriberInterface
             $dotted = $parent->getName() ? $parent->getName() . '.' . $name : $name;
             // Add input from the previous submit
             if ($name !== '_token' && $this->session->hasOldInput($dotted)) {
-                $event->setData($this->session->getOldInput($dotted));
+                // Get old value
+                $value = $this->session->getOldInput($dotted);
+
+                // Transform back to good data
+                $value = $this->transformValue($event, $value);
+
+                // Store on the form
+                $event->setData($value);
             }
 
             if ($this->session->has('errors')) {
@@ -50,5 +58,23 @@ class SessionListener implements EventSubscriberInterface
                 }
             }
         }
+    }
+
+    /**
+     * @param FormEvent $event
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function transformValue(FormEvent $event, $value)
+    {
+        // Get all view transformers for this event
+        $transformers = $event->getForm()->getConfig()->getViewTransformers();
+
+        // Reverse them all..
+        foreach ($transformers as $transformer) {
+            $value = $transformer->reverseTransform($value);
+        }
+
+        return $value;
     }
 }
