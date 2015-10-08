@@ -222,3 +222,14 @@ $form = $this->createFormBuilder($user)
   	$user->upload();
         $user->save();
 }
+
+## Extending
+
+You can extend some of the arrays in the ServiceProvider, eg. to add Types, add this to the `register()` method in your own ServiceProvider:
+
+```php
+$this->app->extend('form.types', function($types, $app){
+    $types[] = new CustomType();
+    return $types;
+});
+```
