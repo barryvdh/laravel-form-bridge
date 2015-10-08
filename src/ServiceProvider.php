@@ -1,10 +1,11 @@
 <?php namespace Barryvdh\Form;
 
-use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Component\Form\Forms;
-use Symfony\Bridge\Twig\Form\TwigRenderer;
-use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Barryvdh\Form\Twig\FormExtension;
+use Symfony\Bridge\Twig\Form\TwigRenderer;
+use Barryvdh\Form\Extension\EloquentExtension;
+use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 
@@ -49,16 +50,40 @@ class ServiceProvider extends BaseServiceProvider {
             return new TwigRenderer($app['twig.form.engine']);
         });
 
-        $this->app->bind('form.factory', function($app) {
-            $csrfExtension = $app->make('Barryvdh\Form\Extension\SessionExtension');
+        $this->app->bind('form.types', function () {
+            return array();
+        });
 
+        $this->app->bind('form.type.extensions', function () {
+            return array();
+        });
+
+        $this->app->bind('form.type.guessers', function () {
+            return array();
+        });
+
+        $this->app->bind('form.extensions', function ($app) {
+            return array(
+                $app->make('Barryvdh\Form\Extension\SessionExtension'),
+                new HttpFoundationExtension(),
+                new EloquentExtension(),
+            );
+        });
+
+        $this->app->bind('form.factory', function($app) {
             return Forms::createFormFactoryBuilder()
-                ->addExtension($csrfExtension)
-                ->addExtension(new HttpFoundationExtension())
-                ->addExtension(new EloquentExtension())
+                ->addExtensions($app['form.extensions'])
+                ->addTypes($app['form.types'])
+                ->addTypeExtensions($app['form.type.extensions'])
+                ->addTypeGuessers($app['form.type.guessers'])
+                ->setResolvedTypeFactory($app['form.resolved_type_factory'])
                 ->getFormFactory();
         });
         $this->app->alias('form.factory', 'Symfony\Component\Form\FormFactoryInterface');
+
+        $this->app->bind('form.resolved_type_factory', function () {
+            return new ResolvedFormTypeFactory();
+        });
     }
 
     /**
