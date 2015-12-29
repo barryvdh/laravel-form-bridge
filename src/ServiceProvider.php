@@ -93,6 +93,16 @@ class ServiceProvider extends BaseServiceProvider {
      */
     public function provides()
     {
-        return array('Symfony\Component\Form\FormFactoryInterface', 'form.factory', 'twig.form.engine', 'twig.form.renderer');
+        return array(
+            'Symfony\Component\Form\FormFactoryInterface',
+            'form.factory',
+            'twig.form.engine',
+            'twig.form.renderer',
+            'form.resolved_type_factory',
+            'form.types',
+            'form.type.extensions',
+            'form.type.guessers',
+            'form.extensions',
+        );
     }
 }
