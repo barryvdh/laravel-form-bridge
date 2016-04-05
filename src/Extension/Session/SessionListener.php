@@ -1,6 +1,5 @@
 <?php namespace Barryvdh\Form\Extension\Session;
 
-use Carbon\Carbon;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Illuminate\Session\SessionManager;
