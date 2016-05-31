@@ -1,17 +1,12 @@
-## Laravel Form Bridge
+## Laravel 5 Form Bridge
 
-> _Note:_ This package is still work-in-progress. Don't use this in production yet.
-
-For Laravel 5.0, requires a configured [TwigBridge](https://github.com/rcrowe/TwigBridge) or similar laravel package that registers `app('twig')`.
+> Requires a configured [TwigBridge](https://github.com/rcrowe/TwigBridge) or similar laravel package that registers `app('twig')`.
 
 Features:
  - [x] Set up basic extensions 
  - [x] Pre-set old input
  - [x] Add validation errors
  - [x] Translate field names
- - [ ] Add plain/blade rendering?
- - [ ] Pre-set HTML5 validation attributes based on rules?
- - [ ] Test it 
 
 ### Install
  - Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev",`
