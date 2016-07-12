@@ -20,7 +20,7 @@ trait ValidatesForms {
 	 */
 	public function validateForm(Form $form, Request $request, array $rules, array $messages = array())
 	{
-		$data = $form->getName() ? $request->only($form->getName()) : $request->all();
+		$data = $form->getName() ? array_first($request->only($form->getName())) : $request->all();
 		$validator = $this->getValidationFactory()->make($data, $rules, $messages);
 
 		if ($validator->fails())
