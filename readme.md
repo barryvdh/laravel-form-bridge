@@ -9,7 +9,7 @@ Features:
  - [x] Translate field names
 
 ### Install
- - `composer require barryvdh/laravel-form-bridge:"0.2.x@dev"`
+ - `composer require barryvdh/laravel-form-bridge`
  - Add `Barryvdh\Form\ServiceProvider::class,` to you ServiceProviders.
  - (optional) Add `'FormFactory' => Barryvdh\Form\Facade\FormFactory::class,` to your Facades.
 
