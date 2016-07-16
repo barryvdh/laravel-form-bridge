@@ -1,5 +1,7 @@
 <?php namespace Barryvdh\Form;
 
+use Barryvdh\Form\Extension\SessionExtension;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Forms;
 use Barryvdh\Form\Twig\FormExtension;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
@@ -9,6 +11,7 @@ use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Bridge\Twig\Extension\FormExtension as TwigBridgeFormExtension;
 
 class ServiceProvider extends BaseServiceProvider {
 
@@ -25,7 +28,7 @@ class ServiceProvider extends BaseServiceProvider {
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
         // Add the Form templates to the Twig Chain Loader
-        $reflected = new \ReflectionClass('Symfony\Bridge\Twig\Extension\FormExtension');
+        $reflected = new \ReflectionClass(TwigBridgeFormExtension::class);
         $path = dirname($reflected->getFileName()).'/../Resources/views/Form';
         $this->app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($path));
 
@@ -65,7 +68,7 @@ class ServiceProvider extends BaseServiceProvider {
 
         $this->app->bind('form.extensions', function ($app) {
             return array(
-                $app->make('Barryvdh\Form\Extension\SessionExtension'),
+                $app->make(SessionExtension::class),
                 new HttpFoundationExtension(),
                 new EloquentExtension(),
                 new FormValidatorExtension()
@@ -81,7 +84,7 @@ class ServiceProvider extends BaseServiceProvider {
                 ->setResolvedTypeFactory($app['form.resolved_type_factory'])
                 ->getFormFactory();
         });
-        $this->app->alias('form.factory', 'Symfony\Component\Form\FormFactoryInterface');
+        $this->app->alias('form.factory', FormFactoryInterface::class);
 
         $this->app->bind('form.resolved_type_factory', function () {
             return new ResolvedFormTypeFactory();
@@ -96,7 +99,7 @@ class ServiceProvider extends BaseServiceProvider {
     public function provides()
     {
         return array(
-            'Symfony\Component\Form\FormFactoryInterface',
+            FormFactoryInterface::class,
             'form.factory',
             'twig.form.engine',
             'twig.form.renderer',

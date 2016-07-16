@@ -10,12 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/support": "5.0.x|5.1.x|5.2.x",
-        "symfony/form": "~2.6|~3.0",
-        "symfony/validator": "~2.6|~3.0",
-        "symfony/twig-bridge": "~2.6|~3.0",
-        "rcrowe/twigbridge": "0.7.*|0.8.*|0.9.*"
+        "php": ">=5.5.0",
+        "illuminate/support": "5.2.x|5.3.x",
+        "symfony/form": "~3.0",
+        "symfony/validator": "~3.0",
+        "symfony/twig-bridge": "~3.0",
+        "rcrowe/twigbridge": "0.9.*"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +24,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.1-dev"
+            "dev-master": "0.2-dev"
         }
     }
 }

@@ -1,5 +1,8 @@
 <?php namespace Barryvdh\Form;
 
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormFactoryInterface;
+
 trait CreatesForms {
 
 	/**
@@ -26,7 +29,7 @@ trait CreatesForms {
 	 *
 	 * @return \Symfony\Component\Form\Form
 	 */
-	public function createNamed($name, $type = 'form', $data = null, array $options = array())
+	public function createNamed($name, $type = FormType::class, $data = null, array $options = array())
 	{
 		return $this->getFormFactory()->createNamed($name, $type, $data, $options);
 	}
@@ -37,11 +40,11 @@ trait CreatesForms {
 	 *
 	 * @param  mixed $data
 	 * @param  array $options
-	 * @return \Symfony\Component\Form\FormBuilder
+	 * @return \Symfony\Component\Form\FormBuilderInterface
 	 */
 	public function createFormBuilder($data = null, array $options = array())
 	{
-		return $this->getFormFactory()->createNamedBuilder('', 'form', $data, $options);
+		return $this->getFormFactory()->createNamedBuilder('', FormType::class, $data, $options);
 	}
 
 	/**
@@ -54,7 +57,7 @@ trait CreatesForms {
 	 */
 	public function createNamedFormBuilder($name = '', $data = null, array $options = array())
 	{
-		return $this->getFormFactory()->createNamedBuilder($name, 'form', $data, $options);
+		return $this->getFormFactory()->createNamedBuilder($name, FormType::class, $data, $options);
 	}
 
 	/**
@@ -63,7 +66,7 @@ trait CreatesForms {
 	 * @return \Symfony\Component\Form\FormFactoryInterface
 	 */
 	protected function getFormFactory(){
-		return app('Symfony\Component\Form\FormFactoryInterface');
+		return app(FormFactoryInterface::class);
 	}
 
 }

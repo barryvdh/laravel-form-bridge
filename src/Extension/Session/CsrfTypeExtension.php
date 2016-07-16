@@ -1,6 +1,8 @@
 <?php namespace Barryvdh\Form\Extension\Session;
 
 use Illuminate\Session\SessionManager;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -34,7 +36,7 @@ class CsrfTypeExtension extends AbstractTypeExtension{
         if ( !$view->parent && $options['compound']) {
             $token = $this->session->token();
             $factory = $form->getConfig()->getFormFactory();
-            $csrfForm = $factory->createNamed('_token', 'hidden', $token, array(
+            $csrfForm = $factory->createNamed('_token', HiddenType::class, $token, array(
                 'mapped' => false,
             ));
             $view->children['_token'] = $csrfForm->createView(null);
@@ -49,6 +51,6 @@ class CsrfTypeExtension extends AbstractTypeExtension{
      */
     public function getExtendedType()
     {
-        return 'form';
+        return FormType::class;
     }
 }

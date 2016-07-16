@@ -1,6 +1,7 @@
 <?php namespace Barryvdh\Form\Extension\Session;
 
 use Illuminate\Session\SessionManager;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 
@@ -31,6 +32,6 @@ class SessionTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'form';
+        return FormType::class;
     }
 }

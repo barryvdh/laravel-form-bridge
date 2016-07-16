@@ -9,9 +9,9 @@ Features:
  - [x] Translate field names
 
 ### Install
- - Composer require `"barryvdh/laravel-form-bridge": "0.1.x@dev",`
- - Add `'Barryvdh\Form\ServiceProvider',` to you ServiceProviders.
- - (optional) Add `'FormFactory' => 'Barryvdh\Form\Facade\FormFactory',` to your Facades.
+ - Composer require `"barryvdh/laravel-form-bridge": "0.2.x@dev",`
+ - Add `Barryvdh\Form\ServiceProvider::class,` to you ServiceProviders.
+ - (optional) Add `'FormFactory' => Barryvdh\Form\Facade\FormFactory::class,` to your Facades.
 
 ### Basic example
 
@@ -24,13 +24,18 @@ Or you can create a Named form, with an empty name.
 If you need to set more options, use the `createBuilder` function instead of `create`, to be able to use `setAction()` etc. You need to call `->getForm()`  to get the actual form instance again.
 
 ```php
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 Route::any('form', function(\Illuminate\Http\Request $request){
     $user = App\User::first();
     
-    $form = app('form.factory')->create('form', $user)
-        ->add('name', 'text')
-        ->add('email', 'email')
-        ->add('save', 'submit', array('label' => 'Save user'));
+    $form = app('form.factory')->create(FormType::class, $user)
+        ->add('name', TextType::class)
+        ->add('email', EmailType::class)
+        ->add('save', SubmitType::class, array('label' => 'Save user'));
 
     $form->handleRequest($request);
 
@@ -79,6 +84,9 @@ CreatesForms: Create a Form or FormBuilder:
 ```php
 use Barryvdh\Form\ValidatesForms;
 use Barryvdh\Form\CreatesForms;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class UserController extends Controller{
 
@@ -89,9 +97,9 @@ class UserController extends Controller{
 		$user = User::first();
 
         $form = $this->createFormBuilder($user)
-            ->add('name', 'text')
-            ->add('email', 'email')
-            ->add('save', 'submit', array('label' => 'Save user'))
+            ->add('name', TextType::class)
+            ->add('email', EmailType::class)
+            ->add('save', SubmitType::class, array('label' => 'Save user'))
             ->getForm();
 
 		$form->handleRequest($request);
@@ -114,11 +122,12 @@ class UserController extends Controller{
 Creating a named form:
 
 ```php
-        
-$form = $this->createNamed('user', 'form', $user) 
-  ->add('name', 'text')
-  ->add('email', 'email')
-  ->add('save', 'submit', array('label' => 'Save user'));
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+
+$form = $this->createNamed('user', FormType::class, $user) 
+  ->add('name', TextType::class)
+  ->add('email', EmailType::class)
+  ->add('save', SubmitType::class, array('label' => 'Save user'));
 ```
 
 See http://symfony.com/doc/current/book/forms.html for more information.
@@ -153,7 +162,7 @@ The `belongs_to_many` type extends the [choice type](http://symfony.com/doc/curr
 If you want to translate your labels automatically, just pass the translation key as the `label` attribute. It will run throught Twig's `trans` filter.
 
 ```php
-->add('name', 'text', ['label' => 'fields.name'])
+->add('name', TextType::class, ['label' => 'fields.name'])
 ```
 
 ## Uploading Files
@@ -203,12 +212,17 @@ Class User extends Model {
 ```
 
 ```php
+
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 $user = User::first();
 
 $form = $this->createFormBuilder($user)
-    ->add('name', 'text')
-    ->add('file', 'file')
-    ->add('save', 'submit', array('label' => 'Save user'))
+    ->add('name', TextType::class)
+    ->add('file', FileType::class)
+    ->add('save', SubmitType::class, array('label' => 'Save user'))
     ->getForm();
     
  $form->handleRequest($request);
