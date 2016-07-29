@@ -5,6 +5,7 @@ use Symfony\Component\Form\FormEvent;
 use Illuminate\Session\SessionManager;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
@@ -36,7 +37,7 @@ class SessionListener implements EventSubscriberInterface
         $name = $form->getConfig()->getName();
 
         if ( ! $form->isRoot() && $parent = $form->getParent()){
-            $dotted = $parent->getName() !== null ? $parent->getName() . '.' . $name : $name;
+            $dotted = $parent->getName() !== null ? $this->getFullName($parent) . '.' . $name : $name;
             // Add input from the previous submit
             if ($name !== '_token' && $this->session->hasOldInput($dotted)) {
                 // Get old value
@@ -59,6 +60,23 @@ class SessionListener implements EventSubscriberInterface
         }
     }
 
+   /**
+     * Get the name recursively from all parents
+     *
+     * @param  FormInterface $form
+     * @return string
+     */
+    public function getFullName($form)
+    {
+        $name = $form->getName();
+
+        if ($parent = $form->getParent()) {
+            $name = $this->getFullName($parent) . '.' . $name;
+        }
+
+        return $name;
+    }
+    
     /**
      * @param FormEvent $event
      * @param mixed $value
