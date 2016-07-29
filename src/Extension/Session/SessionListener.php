@@ -5,6 +5,7 @@ use Symfony\Component\Form\FormEvent;
 use Illuminate\Session\SessionManager;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
@@ -33,14 +34,16 @@ class SessionListener implements EventSubscriberInterface
     public function preSet(FormEvent $event)
     {
         $form = $event->getForm();
-        $name = $form->getConfig()->getName();
+        $rootName = $form->getRoot()->getName();
 
-        if ( ! $form->isRoot() && $parent = $form->getParent()){
-            $dotted = $parent->getName() !== null ? $parent->getName() . '.' . $name : $name;
+        if ( ! $form->isRoot() && $parent = $form->getParent()) {
+            $name = $this->getDottedName($form);
+            $fullName = $rootName ? $rootName . '.' . $name : $name;
+
             // Add input from the previous submit
-            if ($name !== '_token' && $this->session->hasOldInput($dotted)) {
+            if ($form->getName() !== '_token' && $this->session->hasOldInput($fullName)) {
                 // Get old value
-                $value = $this->session->getOldInput($dotted);
+                $value = $this->session->getOldInput($fullName);
 
                 // Transform back to good data
                 $value = $this->transformValue($event, $value);
@@ -57,6 +60,19 @@ class SessionListener implements EventSubscriberInterface
                 }
             }
         }
+    }
+
+    protected function getDottedName(FormInterface $form)
+    {
+        $name = [$form->getName()];
+
+        while ($form = $form->getParent()) {
+            if ($form->getName() !== null && !$form->isRoot()) {
+                array_unshift($name, $form->getName());
+            }
+        }
+
+        return implode('.', $name);
     }
 
     /**
