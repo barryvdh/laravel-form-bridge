@@ -40,7 +40,7 @@ Route::any('form', function(\Illuminate\Http\Request $request){
     $form->handleRequest($request);
 
     if ($form->isSubmitted()) {
-        $v = Validator::make($form->getData(), [
+        $v = Validator::make($request->get($form->getName()), [
             'name' => 'required',
             'email' => 'required|email',
         ]);
