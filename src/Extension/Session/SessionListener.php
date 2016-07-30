@@ -38,7 +38,7 @@ class SessionListener implements EventSubscriberInterface
 
         if ( ! $form->isRoot() && $parent = $form->getParent()) {
             $name = $this->getDottedName($form);
-            $fullName = $rootName ? $rootName . '.' . $name : $name;
+            $fullName = $rootName !== null ? $rootName . '.' . $name : $name;
 
             // Add input from the previous submit
             if ($form->getName() !== '_token' && $this->session->hasOldInput($fullName)) {
