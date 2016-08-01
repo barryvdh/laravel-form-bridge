@@ -19,7 +19,7 @@ class BelongsToManyTransformer implements DataTransformerInterface
 	public function transform($value)
 	{
 		if ($value instanceof BelongsToMany) {
-			return $value->lists($value->getOtherKey());
+			return $value->lists($value->getOtherKey())->toArray();
 		}
 
 		return $value;
