@@ -38,7 +38,7 @@ class SessionListener implements EventSubscriberInterface
 
         if ( ! $form->isRoot() && $parent = $form->getParent()) {
             $name = $this->getDottedName($form);
-            $fullName = $rootName !== null ? $rootName . '.' . $name : $name;
+            $fullName = $this->getFullName($rootName, $name);
 
             // Add input from the previous submit
             if ($form->getName() !== '_token' && $this->session->hasOldInput($fullName)) {
@@ -73,6 +73,15 @@ class SessionListener implements EventSubscriberInterface
         }
 
         return implode('.', $name);
+    }
+
+    protected function getFullName($rootName, $dottedName)
+    {
+        if ($rootName === '') {
+            return $dottedName;
+        }
+
+        return $rootName . '.' . $dottedName;
     }
 
     /**
