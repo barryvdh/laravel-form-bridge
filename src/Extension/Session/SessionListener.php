@@ -49,7 +49,9 @@ class SessionListener implements EventSubscriberInterface
                 $value = $this->transformValue($event, $value);
 
                 // Store on the form
-                $event->setData($value);
+                if ($this->validData($form, $value)) {
+                    $event->setData($value);
+                }
             }
 
             if ($this->session->has('errors')) {
@@ -100,5 +102,17 @@ class SessionListener implements EventSubscriberInterface
         }
 
         return $value;
+    }
+
+    /**
+     * Make sure the data is not an array and the data class is not set.
+     *
+     * @param FormInterface $form
+     * @param mixed         $value
+     * @return bool
+     */
+    protected function validData(FormInterface $form, $value)
+    {
+        return ! is_array($value) && is_null($form->getConfig()->getDataClass());
     }
 }
