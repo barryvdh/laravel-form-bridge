@@ -6,11 +6,11 @@ use Symfony\Component\Form\Forms;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
-use Symfony\Bridge\Twig\Extension\FormExtension;
 use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
+use Symfony\Bridge\Twig\Extension\FormExtension;
 
 class ServiceProvider extends BaseServiceProvider {
 
@@ -26,14 +26,32 @@ class ServiceProvider extends BaseServiceProvider {
         $configPath = __DIR__ . '/../config/form.php';
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
-        // Add the Form templates to the Twig Chain Loader
+        /** @var \Twig_Environment $twig */
+        $twig = $this->app->make(\Twig_Environment::class);
+
+        $loader = $twig->getLoader();
+
+        // If the loader is not already a chain, make it one
+        if (! $loader instanceof \Twig_Loader_Chain) {
+            $loader = new \Twig_Loader_Chain([$loader]);
+            $twig->setLoader($loader);
+        }
+
         $reflected = new \ReflectionClass(FormExtension::class);
         $path = dirname($reflected->getFileName()).'/../Resources/views/Form';
-        $this->app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($path));
+        $loader->addLoader(new \Twig_Loader_Filesystem($path));
 
-        $this->app['twig']->addExtension(new FormExtension($this->app['twig.form.renderer']));
-        $this->app['twig']->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
-        $this->app['twig']->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
+        /** @var TwigRenderer $renderer */
+        $renderer = $this->app['twig.form.renderer'];
+        $renderer->setEnvironment($twig);
+
+        // Add the extension
+        $twig->addExtension(new FormExtension($renderer));
+
+        // trans filter is used in the forms
+        $twig->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
+        // csrf_token needs to be replaced for Laravel
+        $twig->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
     }
 
     /**
