@@ -3,15 +3,14 @@
 use Barryvdh\Form\Extension\SessionExtension;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Forms;
-use Barryvdh\Form\Twig\FormExtension;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Bridge\Twig\Extension\FormExtension;
 use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
-use Symfony\Bridge\Twig\Extension\FormExtension as TwigBridgeFormExtension;
 
 class ServiceProvider extends BaseServiceProvider {
 
@@ -28,11 +27,13 @@ class ServiceProvider extends BaseServiceProvider {
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
         // Add the Form templates to the Twig Chain Loader
-        $reflected = new \ReflectionClass(TwigBridgeFormExtension::class);
+        $reflected = new \ReflectionClass(FormExtension::class);
         $path = dirname($reflected->getFileName()).'/../Resources/views/Form';
         $this->app['twig.loader']->addLoader(new \Twig_Loader_Filesystem($path));
 
         $this->app['twig']->addExtension(new FormExtension($this->app['twig.form.renderer']));
+        $this->app['twig']->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
+        $this->app['twig']->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
     }
 
     /**
