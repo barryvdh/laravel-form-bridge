@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
 use Symfony\Bridge\Twig\Form\TwigRendererInterface;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\Forms;
@@ -97,13 +98,14 @@ class ServiceProvider extends BaseServiceProvider {
             );
         });
 
-        $this->app->singleton(FormFactoryInterface::class, function($app) {
+        $this->app->singleton(FormFactory::class, function($app) {
             return Forms::createFormFactoryBuilder()
                 ->addExtensions($app['form.extensions'])
                 ->setResolvedTypeFactory(new ResolvedFormTypeFactory())
                 ->getFormFactory();
         });
-        $this->app->alias(FormFactoryInterface::class, 'form.factory');
+        $this->app->alias(FormFactory::class, 'form.factory');
+        $this->app->alias(FormFactory::class, FormFactoryInterface::class);
 
     }
 
