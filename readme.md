@@ -59,13 +59,14 @@ Route::any('form', function(Request $request, FormFactoryInterface $factory){
 });
 ```
 
-Use the following in your Blade templates, if you added the FormRenderer facade:
+Use the following in your Blade templates:
 
 ```php
-{!! FormRenderer::start($form) !!}
-{!! FormRenderer::widget($form) !!}
-{!! FormRenderer::end($form) !!}
+@form_start($form)
+@form_widget($form)
+@form_end($form)
 ```
+Other directives are: @form_label, @form_errors, @form_rest and @form_row
 
 Or use the following in your twig templates to render the view:
 

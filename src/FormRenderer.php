@@ -74,8 +74,11 @@ class FormRenderer
      * @param  array $variables
      * @return string
      */
-    public function label(FormView $view, array $variables = [])
+    public function label(FormView $view, $label, $variables = [])
     {
+        if (!isset($variables['label'])) {
+            $variables['label'] = $label;
+        }
         return $this->renderBlock($view, 'label', $variables);
     }
 

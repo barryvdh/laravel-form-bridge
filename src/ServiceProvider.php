@@ -1,5 +1,7 @@
 <?php namespace Barryvdh\Form;
 
+use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
+use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
 use Symfony\Bridge\Twig\Form\TwigRendererInterface;
@@ -59,6 +61,8 @@ class ServiceProvider extends BaseServiceProvider {
         $twig->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
         // csrf_token needs to be replaced for Laravel
         $twig->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
+
+        $this->registerBladeDirectives();
     }
 
     /**
@@ -101,6 +105,15 @@ class ServiceProvider extends BaseServiceProvider {
         });
         $this->app->alias(FormFactoryInterface::class, 'form.factory');
 
+    }
+
+    protected function registerBladeDirectives()
+    {
+        foreach (['start', 'end', 'widget', 'errors', 'label', 'row', 'rest'] as $method) {
+            Blade::directive('form_' . $method, function ($expression) use($method) {
+                return '<?php echo \\' . FormRendererFacade::class .'::'.$method.'('.$expression.'); ?>';
+            });
+        }
     }
 
     /**
