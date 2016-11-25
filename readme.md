@@ -7,8 +7,10 @@ Laravel integration:
  - Add validation errors
  - Translate field names
 
+See for Laravel 5.1 the [0.2 branch](https://github.com/barryvdh/laravel-form-bridge/tree/v0.2.2)
+
 ### Install
- - `composer require barryvdh/laravel-form-bridge`
+ - `composer require barryvdh/laravel-form-bridge:"0.3@dev"`
  - Add `Barryvdh\Form\ServiceProvider::class,` to you ServiceProviders.
  - (optional) Add `'FormRenderer' => Barryvdh\Form\Facade\FormRenderer::class,` to your Facades.
  - (optional) Add `'FormFactory' => Barryvdh\Form\Facade\FormFactory::class,` to your Facades.
