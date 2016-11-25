@@ -66,9 +66,26 @@ Use the following in your Blade templates:
 @form_widget($form)
 @form_end($form)
 ```
-Other directives are: @form_label, @form_errors, @form_rest and @form_row
+Other directives are: @form, @form_label, @form_errors, @form_rest and @form_row
 
-Or use the following in your twig templates to render the view:
+```php
+@form($form)
+```
+
+```php
+@form_start($form)
+
+<h2>Name</h2>
+@form_label($form['name'], 'Your name')
+@form_widget($form['name'], ['attr' => ['class' => 'name-input']])
+
+<h2>Rest</h2>
+@form_rest($form)
+
+@form_end($form)
+```
+
+Or use the following in your Twig templates to render the view:
 
 ```twig
 {{ form_start(form) }}

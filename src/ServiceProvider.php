@@ -109,6 +109,10 @@ class ServiceProvider extends BaseServiceProvider {
 
     protected function registerBladeDirectives()
     {
+        Blade::directive('form', function ($expression) {
+            return '<?php echo \\' . FormRendererFacade::class .'::form('.$expression.'); ?>';
+        });
+
         foreach (['start', 'end', 'widget', 'errors', 'label', 'row', 'rest'] as $method) {
             Blade::directive('form_' . $method, function ($expression) use($method) {
                 return '<?php echo \\' . FormRendererFacade::class .'::'.$method.'('.$expression.'); ?>';

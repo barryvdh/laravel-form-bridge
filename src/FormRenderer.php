@@ -21,6 +21,18 @@ class FormRenderer
     }
 
     /**
+     * Renders the form
+     *
+     * @param  FormView $view
+     * @param  array $variables
+     * @return string
+     */
+    public function form(FormView $view, array $variables = [])
+    {
+        return $this->renderer->renderBlock($view, 'form', $variables);
+    }
+
+    /**
      * Renders the opening form tag of the form.
      *
      * @param  FormView $view
@@ -29,7 +41,7 @@ class FormRenderer
      */
     public function start(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'start', $variables);
+        return $this->renderer->renderBlock($view, 'form_start', $variables);
     }
 
     /**
@@ -41,7 +53,7 @@ class FormRenderer
      */
     public function end(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'end', $variables);
+        return $this->renderer->renderBlock($view, 'form_end', $variables);
     }
 
     /**
@@ -52,7 +64,7 @@ class FormRenderer
      */
     public function widget(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'widget', $variables);
+        return $this->renderer->searchAndRenderBlock($view, 'widget', $variables);
     }
 
     /**
@@ -64,7 +76,7 @@ class FormRenderer
      */
     public function errors(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'errors', $variables);
+        return $this->renderer->searchAndRenderBlock($view, 'errors', $variables);
     }
 
     /**
@@ -79,7 +91,7 @@ class FormRenderer
         if (!isset($variables['label'])) {
             $variables['label'] = $label;
         }
-        return $this->renderBlock($view, 'label', $variables);
+        return $this->renderer->searchAndRenderBlock($view, 'label', $variables);
     }
 
     /**
@@ -91,7 +103,7 @@ class FormRenderer
      */
     public function row(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'row', $variables);
+        return $this->renderer->searchAndRenderBlock($view, 'row', $variables);
     }
 
     /**
@@ -103,17 +115,6 @@ class FormRenderer
      */
     public function rest(FormView $view, array $variables = [])
     {
-        return $this->renderBlock($view, 'rest', $variables);
-    }
-
-    /**
-     * @param  FormView $view
-     * @param  string $blockNameSuffix
-     * @param  array $variables
-     * @return string
-     */
-    private function renderBlock(FormView $view, $blockNameSuffix, array $variables = [])
-    {
-        return $this->renderer->searchAndRenderBlock($view, $blockNameSuffix, $variables);
+        return $this->renderer->searchAndRenderBlock($view, 'rest', $variables);
     }
 }
