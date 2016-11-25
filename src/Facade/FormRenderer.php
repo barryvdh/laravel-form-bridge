@@ -1,15 +1,15 @@
 <?php namespace Barryvdh\Form\Facade;
 
+use Barryvdh\Form\FormRenderer as RealFormRenderer;
 use Illuminate\Support\Facades\Facade;
-use Symfony\Component\Form\FormFactoryInterface;
 
-class FormFactory extends Facade
+class FormRenderer extends Facade
 {
     /**
      * {@inheritDoc}
      */
     protected static function getFacadeAccessor()
     {
-        return FormFactoryInterface::class;
+        return RealFormRenderer::class;
     }
 }

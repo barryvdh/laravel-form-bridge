@@ -11,10 +11,10 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "illuminate/support": "5.1.x|5.2.x|5.3.x",
-        "symfony/form": "~2.8|~3.0",
-        "symfony/validator": "~2.8|~3.0",
-        "symfony/twig-bridge": "~2.8|~3.0"
+        "illuminate/support": "5.2.x|5.3.x",
+        "symfony/form": "^3",
+        "symfony/validator": "^3",
+        "symfony/twig-bridge": "^3"
     },
     "autoload": {
         "psr-4": {

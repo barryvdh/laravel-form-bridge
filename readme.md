@@ -1,16 +1,16 @@
 ## Laravel 5 Form Bridge
 
-> Requires a configured [TwigBridge](https://github.com/rcrowe/TwigBridge) or similar laravel package that registers `app('twig')`.
+See http://symfony.com/doc/current/forms.html
 
-Features:
- - [x] Set up basic extensions 
- - [x] Pre-set old input
- - [x] Add validation errors
- - [x] Translate field names
+Laravel integration:
+ - Pre-set old input
+ - Add validation errors
+ - Translate field names
 
 ### Install
  - `composer require barryvdh/laravel-form-bridge`
  - Add `Barryvdh\Form\ServiceProvider::class,` to you ServiceProviders.
+ - (optional) Add `'FormRenderer' => Barryvdh\Form\Facade\FormRenderer::class,` to your Facades.
  - (optional) Add `'FormFactory' => Barryvdh\Form\Facade\FormFactory::class,` to your Facades.
 
 ### Basic example
@@ -24,15 +24,17 @@ Or you can create a Named form, with an empty name.
 If you need to set more options, use the `createBuilder` function instead of `create`, to be able to use `setAction()` etc. You need to call `->getForm()`  to get the actual form instance again.
 
 ```php
+use Illuminate\Http\Request;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-Route::any('form', function(\Illuminate\Http\Request $request){
+Route::any('form', function(Request $request, FormFactoryInterface $factory){
     $user = App\User::first();
     
-    $form = app('form.factory')->create(FormType::class, $user)
+    $form = $factory->create(FormType::class, $user)
         ->add('name', TextType::class)
         ->add('email', EmailType::class)
         ->add('save', SubmitType::class, array('label' => 'Save user'));
@@ -57,7 +59,15 @@ Route::any('form', function(\Illuminate\Http\Request $request){
 });
 ```
 
-Use the following in your twig templates to render the view:
+Use the following in your Blade templates, if you added the FormRenderer facade:
+
+```php
+{!! FormRenderer::start($form) !!}
+{!! FormRenderer::widget($form) !!}
+{!! FormRenderer::end($form) !!}
+```
+
+Or use the following in your twig templates to render the view:
 
 ```twig
 {{ form_start(form) }}

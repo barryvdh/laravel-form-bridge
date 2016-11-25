@@ -1,7 +1,10 @@
 <?php namespace Barryvdh\Form;
 
 use Barryvdh\Form\Extension\SessionExtension;
+use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
+use Symfony\Bridge\Twig\Form\TwigRendererInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\Forms;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Barryvdh\Form\Extension\EloquentExtension;
@@ -26,8 +29,12 @@ class ServiceProvider extends BaseServiceProvider {
         $configPath = __DIR__ . '/../config/form.php';
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
-        /** @var \Twig_Environment $twig */
-        $twig = $this->app->make(\Twig_Environment::class);
+        if ($this->app->bound(\Twig_Environment::class)) {
+            /** @var \Twig_Environment $twig */
+            $twig = $this->app->make(\Twig_Environment::class);
+        } else {
+            $twig = new \Twig_Environment(new \Twig_Loader_Chain([]));
+        }
 
         $loader = $twig->getLoader();
 
@@ -42,7 +49,7 @@ class ServiceProvider extends BaseServiceProvider {
         $loader->addLoader(new \Twig_Loader_Filesystem($path));
 
         /** @var TwigRenderer $renderer */
-        $renderer = $this->app['twig.form.renderer'];
+        $renderer = $this->app->make(TwigRendererInterface::class);
         $renderer->setEnvironment($twig);
 
         // Add the extension
@@ -64,26 +71,18 @@ class ServiceProvider extends BaseServiceProvider {
         $configPath = __DIR__ . '/../config/form.php';
         $this->mergeConfigFrom($configPath, 'form');
 
-        $this->app->bind('twig.form.engine', function ($app) {
+        $this->app->singleton(TwigRendererEngine::class, function ($app) {
             $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
             return new TwigRendererEngine($theme);
         });
+        $this->app->alias(TwigRendererEngine::class, TwigRendererEngineInterface::class);
 
-        $this->app->bind('twig.form.renderer', function ($app) {
-            return new TwigRenderer($app['twig.form.engine']);
+        $this->app->singleton(TwigRenderer::class, function ($app) {
+            $renderer = $app->make(TwigRendererEngineInterface::class);
+            return new TwigRenderer($renderer);
         });
-
-        $this->app->bind('form.types', function () {
-            return array();
-        });
-
-        $this->app->bind('form.type.extensions', function () {
-            return array();
-        });
-
-        $this->app->bind('form.type.guessers', function () {
-            return array();
-        });
+        $this->app->alias(TwigRenderer::class, TwigRendererInterface::class);
+        $this->app->alias(TwigRenderer::class, FormRendererInterface::class);
 
         $this->app->bind('form.extensions', function ($app) {
             return array(
@@ -94,20 +93,14 @@ class ServiceProvider extends BaseServiceProvider {
             );
         });
 
-        $this->app->bind('form.factory', function($app) {
+        $this->app->singleton(FormFactoryInterface::class, function($app) {
             return Forms::createFormFactoryBuilder()
                 ->addExtensions($app['form.extensions'])
-                ->addTypes($app['form.types'])
-                ->addTypeExtensions($app['form.type.extensions'])
-                ->addTypeGuessers($app['form.type.guessers'])
-                ->setResolvedTypeFactory($app['form.resolved_type_factory'])
+                ->setResolvedTypeFactory(new ResolvedFormTypeFactory())
                 ->getFormFactory();
         });
-        $this->app->alias('form.factory', FormFactoryInterface::class);
+        $this->app->alias(FormFactoryInterface::class, 'form.factory');
 
-        $this->app->bind('form.resolved_type_factory', function () {
-            return new ResolvedFormTypeFactory();
-        });
     }
 
     /**
@@ -119,13 +112,13 @@ class ServiceProvider extends BaseServiceProvider {
     {
         return array(
             FormFactoryInterface::class,
+            TwigRendererEngine::class,
+            TwigRendererEngineInterface::class,
+            TwigRenderer::class,
+            TwigRendererInterface::class,
+            FormRendererInterface::class,
+            FormFactoryInterface::class,
             'form.factory',
-            'twig.form.engine',
-            'twig.form.renderer',
-            'form.resolved_type_factory',
-            'form.types',
-            'form.type.extensions',
-            'form.type.guessers',
             'form.extensions',
         );
     }
