@@ -97,7 +97,7 @@ class ServiceProvider extends BaseServiceProvider {
         });
         $this->app->bind('form.type.guessers', function ($app) {
             return array(
-                new ValidationTypeGuesser($app['validator'])
+              //  new ValidationTypeGuesser($app['validator'])
             );
         });
 
