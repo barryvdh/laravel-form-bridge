@@ -1,5 +1,6 @@
 <?php namespace Barryvdh\Form;
 
+use Barryvdh\Form\Extension\Validation\ValidationExtension;
 use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
@@ -94,13 +95,14 @@ class ServiceProvider extends BaseServiceProvider {
                 $app->make(SessionExtension::class),
                 new HttpFoundationExtension(),
                 new EloquentExtension(),
-                new FormValidatorExtension()
+                new FormValidatorExtension(),
             );
         });
 
         $this->app->singleton(FormFactory::class, function($app) {
             return Forms::createFormFactoryBuilder()
                 ->addExtensions($app['form.extensions'])
+                ->addTypeExtension(new ValidationExtension($app['validator']))
                 ->setResolvedTypeFactory(new ResolvedFormTypeFactory())
                 ->getFormFactory();
         });
