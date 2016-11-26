@@ -1,6 +1,5 @@
 <?php namespace Barryvdh\Form\Extension\Validation;
 
-
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +7,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ValidationExtension extends AbstractTypeExtension
+class ValidationTypeExtension extends AbstractTypeExtension
 {
     /** @var ValidationFactory  */
     protected $validator;
@@ -35,6 +34,11 @@ class ValidationExtension extends AbstractTypeExtension
                 $rules = [$constraints];
             } else {
                 $rules = $constraints;
+            }
+
+            // If the required option is set for the Field, add it to the rules
+            if ($options['required'] && !in_array('required', $rules)) {
+                $rules[] = 'required';
             }
 
             return $rules;
