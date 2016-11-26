@@ -1,6 +1,7 @@
 <?php namespace Barryvdh\Form;
 
-use Barryvdh\Form\Extension\Validation\ValidationExtension;
+use Barryvdh\Form\Extension\Validation\ValidationTypeExtension;
+use Barryvdh\Form\Extension\Validation\ValidationTypeGuesser;
 use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
@@ -13,7 +14,6 @@ use Symfony\Component\Form\Forms;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
-use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
@@ -90,20 +90,36 @@ class ServiceProvider extends BaseServiceProvider {
         $this->app->alias(TwigRenderer::class, TwigRendererInterface::class);
         $this->app->alias(TwigRenderer::class, FormRendererInterface::class);
 
+        $this->app->bind('form.type.extensions', function ($app) {
+            return array(
+                new ValidationTypeExtension($app['validator'])
+            );
+        });
+        $this->app->bind('form.type.guessers', function ($app) {
+            return array(
+                new ValidationTypeGuesser($app['validator'])
+            );
+        });
+
+
         $this->app->bind('form.extensions', function ($app) {
             return array(
                 $app->make(SessionExtension::class),
                 new HttpFoundationExtension(),
                 new EloquentExtension(),
-                new FormValidatorExtension(),
             );
+        });
+
+        $this->app->bind('form.resolved_type_factory', function () {
+            return new ResolvedFormTypeFactory();
         });
 
         $this->app->singleton(FormFactory::class, function($app) {
             return Forms::createFormFactoryBuilder()
                 ->addExtensions($app['form.extensions'])
-                ->addTypeExtension(new ValidationExtension($app['validator']))
-                ->setResolvedTypeFactory(new ResolvedFormTypeFactory())
+                ->addTypeExtensions($app['form.type.extensions'])
+                ->addTypeGuessers($app['form.type.guessers'])
+                ->setResolvedTypeFactory($app['form.resolved_type_factory'])
                 ->getFormFactory();
         });
         $this->app->alias(FormFactory::class, 'form.factory');
