@@ -1,9 +1,14 @@
 <?php namespace Barryvdh\Form\Extension\Validation;
 
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +29,7 @@ class ValidationTypeExtension extends AbstractTypeExtension
     {
         $resolver->setDefined(array('rules'));
         $resolver->setDefault('rules', array());
+        $resolver->setDefault('required', false);
 
         // Split rule into array
         $rulesNormalizer = function (Options $options, $constraints) use ($resolver) {
@@ -53,6 +59,26 @@ class ValidationTypeExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber(new ValidationListener($this->validator));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $config = $form->getConfig();
+
+        if ( ! $form->isRoot() && $config->hasOption('rules') ) {
+            $rules = $config->getOption('rules');
+
+            $ruleParser = new RulesParser($form, $view, $rules);
+            $attr = $ruleParser->getAttributes();
+
+            // Set form attributes based on rules
+            $view->vars['required'] = in_array('required', $attr);
+            $view->vars['attr'] += $attr;
+        }
+
     }
 
     /**
