@@ -1,7 +1,7 @@
 <?php namespace Barryvdh\Form;
 
+use Barryvdh\Form\Extension\FormDefaultsTypeExtension;
 use Barryvdh\Form\Extension\Validation\ValidationTypeExtension;
-use Barryvdh\Form\Extension\Validation\ValidationTypeGuesser;
 use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
@@ -92,13 +92,12 @@ class ServiceProvider extends BaseServiceProvider {
 
         $this->app->bind('form.type.extensions', function ($app) {
             return array(
-                new ValidationTypeExtension($app['validator'])
+                new FormDefaultsTypeExtension($app['config']->get('form.defaults', [])),
+                new ValidationTypeExtension($app['validator']),
             );
         });
         $this->app->bind('form.type.guessers', function ($app) {
-            return array(
-              //  new ValidationTypeGuesser($app['validator'])
-            );
+            return array();
         });
 
 

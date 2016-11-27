@@ -19,7 +19,7 @@ return array(
     'theme' => 'bootstrap_3_layout.html.twig',
 
     'defaults' => [
-        'required' => true,
+        'required' => false,
     ]
 
 );

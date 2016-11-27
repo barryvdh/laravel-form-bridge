@@ -29,7 +29,6 @@ class ValidationTypeExtension extends AbstractTypeExtension
     {
         $resolver->setDefined(array('rules'));
         $resolver->setDefault('rules', array());
-        $resolver->setDefault('required', false);
 
         // Split rule into array
         $rulesNormalizer = function (Options $options, $constraints) use ($resolver) {
