@@ -46,6 +46,10 @@ class ValidationTypeExtension extends AbstractTypeExtension
                 $rules[] = 'required';
             }
 
+            if (!in_array('required', $rules) && !in_array('nullable', $rules)){
+                $rules[] = 'nullable';
+            }
+
             return $rules;
         };
 
@@ -65,10 +69,17 @@ class ValidationTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $config = $form->getConfig();
 
-        if ( ! $form->isRoot() && $config->hasOption('rules') ) {
-            $rules = $config->getOption('rules');
+        if ( ! $form->isRoot() && isset($options['rules']) ) {
+            $rules = $options['rules'];
+
+            $innerType = $form->getConfig()->getType()->getInnerType();
+            if (
+                ($innerType instanceof NumberType || $innerType instanceof IntegerType)
+                && !in_array('numeric', $rules)
+            ) {
+                $rules[] = 'numeric';
+            }
 
             $ruleParser = new RulesParser($form, $view, $rules);
             $attr = $ruleParser->getAttributes();

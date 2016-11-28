@@ -11,7 +11,6 @@ class FormDefaultsTypeExtension extends AbstractTypeExtension
 
     public function __construct($defaults)
     {
-        dump($defaults);
         $this->defaults = $defaults;
     }
 
