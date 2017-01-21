@@ -14,7 +14,8 @@
         "illuminate/support": "5.1.x|5.2.x|5.3.x",
         "symfony/form": "^3",
         "symfony/validator": "^3",
-        "symfony/twig-bridge": "^3"
+        "symfony/twig-bridge": "^3",
+        "twig/twig": "~1.30|~2.0",
     },
     "autoload": {
         "psr-4": {
