@@ -86,7 +86,7 @@ class ServiceProvider extends BaseServiceProvider {
 
         $this->app->singleton(TwigRendererEngine::class, function ($app) {
             $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
-            return new TwigRendererEngine($theme, $app['twig']);
+            return new TwigRendererEngine($theme);
         });
 
         $this->app->singleton(TwigRenderer::class, function ($app) {
