@@ -53,11 +53,18 @@ class ServiceProvider extends BaseServiceProvider {
         $loader->addLoader(new \Twig_Loader_Filesystem($path));
 
         /** @var TwigRenderer $renderer */
-        $renderer = $this->app->make(TwigRendererInterface::class);
+        $renderer = $this->app->make(TwigRenderer::class);
         $renderer->setEnvironment($twig);
 
+
+        $twig->addRuntimeLoader(new \Twig_FactoryRuntimeLoader(array(
+            TwigRenderer::class => function () {
+                return $this->app->make(TwigRenderer::class);
+            }
+        )));
+
         // Add the extension
-        $twig->addExtension(new FormExtension($renderer));
+        $twig->addExtension(new FormExtension());
 
         // trans filter is used in the forms
         $twig->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
@@ -79,15 +86,13 @@ class ServiceProvider extends BaseServiceProvider {
 
         $this->app->singleton(TwigRendererEngine::class, function ($app) {
             $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
-            return new TwigRendererEngine($theme);
+            return new TwigRendererEngine($theme, $app['twig']);
         });
-        $this->app->alias(TwigRendererEngine::class, TwigRendererEngineInterface::class);
 
         $this->app->singleton(TwigRenderer::class, function ($app) {
-            $renderer = $app->make(TwigRendererEngineInterface::class);
+            $renderer = $app->make(TwigRendererEngine::class);
             return new TwigRenderer($renderer);
         });
-        $this->app->alias(TwigRenderer::class, TwigRendererInterface::class);
         $this->app->alias(TwigRenderer::class, FormRendererInterface::class);
 
         $this->app->bind('form.type.extensions', function ($app) {
