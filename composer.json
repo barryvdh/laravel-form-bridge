@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "illuminate/support": "5.1.x|5.2.x|5.3.x",
+        "illuminate/support": "5.1.x|5.2.x|5.3.x|5.4.x",
         "symfony/form": "^3",
         "symfony/validator": "^3",
         "symfony/twig-bridge": "^3",
