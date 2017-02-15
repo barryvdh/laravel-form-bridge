@@ -14,6 +14,7 @@ use Symfony\Component\Form\Forms;
 use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
@@ -111,6 +112,7 @@ class ServiceProvider extends BaseServiceProvider {
                 $app->make(SessionExtension::class),
                 new HttpFoundationExtension(),
                 new EloquentExtension(),
+                new FormValidatorExtension(),
             );
         });
 
