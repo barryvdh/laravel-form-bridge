@@ -30,8 +30,10 @@ class ValidationTypeExtension extends AbstractTypeExtension
         $resolver->setDefined(array('rules'));
         $resolver->setDefault('rules', array());
 
+        $hasNullable = version_compare(app()->version(), '5.3.0', '>=');
+
         // Split rule into array
-        $rulesNormalizer = function (Options $options, $constraints) use ($resolver) {
+        $rulesNormalizer = function (Options $options, $constraints) use ($resolver, $hasNullable) {
 
             if (is_string($constraints)) {
                 $rules = explode('|', $constraints);
@@ -46,8 +48,10 @@ class ValidationTypeExtension extends AbstractTypeExtension
                 $rules[] = 'required';
             }
 
-            if (!in_array('required', $rules) && !in_array('nullable', $rules)){
-                $rules[] = 'nullable';
+            if ($hasNullable) {
+                if (!in_array('required', $rules) && !in_array('nullable', $rules)) {
+                    $rules[] = 'nullable';
+                }
             }
 
             return $rules;
@@ -69,7 +73,6 @@ class ValidationTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
         if ( ! $form->isRoot() && isset($options['rules']) ) {
             $rules = $options['rules'];
 
@@ -88,7 +91,6 @@ class ValidationTypeExtension extends AbstractTypeExtension
             $view->vars['required'] = in_array('required', $attr);
             $view->vars['attr'] += $attr;
         }
-
     }
 
     /**
