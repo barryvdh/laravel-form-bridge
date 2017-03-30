@@ -163,12 +163,16 @@ $form = $this->createNamed('user', FormType::class, $user)
 See http://symfony.com/doc/current/book/forms.html for more information.
 ## BelongsToMany relations
 
-BelongsToMany behaves differently, because it isn't an actual attribute on your model. Instead, we can use the custom `belongs_to_many` type to fill the Form and sync it manually.
+BelongsToMany behaves differently, because it isn't an actual attribute on your model. Instead, we can set the `mapped` option to `false` and sync it manually.
 
 ```php
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
 $builder
-->add('users', 'belongs_to_many', [
+->add('users', ChoiceType::class, [
     'choices' => \App\User::lists('name', 'id'),
+    'multiple' => true,
+    'mapped' => false,
     'expanded' => true, // true=checkboxes, false=multi select
 ]);
 ```
@@ -179,13 +183,14 @@ if ($form->isSubmitted()) {
     $this->validate($request, $rules);
 
     $item->save();
-    $item->users()->sync($request->get('users'));
+    $item->users()->sync($form->get('users')->getData());
 
     return redirect()->back();
 }
 ```
+See for more options the [choice type documentation](http://symfony.com/doc/current/reference/forms/types/choice.html).
 
-The `belongs_to_many` type extends the [choice type](http://symfony.com/doc/current/reference/forms/types/choice.html), but is `multiple` by default.
+> Note: The BelongsToManyType is deprecated in favor of the ChoiceType from Symfony.
 
 ## Translation labels
 
