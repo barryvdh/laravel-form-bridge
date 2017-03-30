@@ -1,6 +1,7 @@
 <?php namespace Barryvdh\Form;
 
 use Barryvdh\Form\Extension\FormDefaultsTypeExtension;
+use Barryvdh\Form\Extension\Http\HttpExtension;
 use Barryvdh\Form\Extension\Validation\ValidationTypeExtension;
 use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
@@ -19,7 +20,6 @@ use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
-use Symfony\Component\Form\Extension\HttpFoundation\HttpFoundationExtension;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 
 class ServiceProvider extends BaseServiceProvider {
@@ -113,7 +113,7 @@ class ServiceProvider extends BaseServiceProvider {
         $this->app->bind('form.extensions', function ($app) {
             return array(
                 $app->make(SessionExtension::class),
-                new HttpFoundationExtension(),
+                new HttpExtension(),
                 new EloquentExtension(),
                 new FormValidatorExtension(),
             );
