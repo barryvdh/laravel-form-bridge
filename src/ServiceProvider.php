@@ -5,8 +5,10 @@ use Barryvdh\Form\Extension\Validation\ValidationTypeExtension;
 use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
+use Illuminate\View\View;
 use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
 use Symfony\Bridge\Twig\Form\TwigRendererInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
@@ -27,7 +29,7 @@ class ServiceProvider extends BaseServiceProvider {
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     public function boot()
     {
@@ -73,6 +75,7 @@ class ServiceProvider extends BaseServiceProvider {
         $twig->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
 
         $this->registerBladeDirectives();
+        $this->registerViewComposer();
     }
 
     /**
@@ -130,7 +133,6 @@ class ServiceProvider extends BaseServiceProvider {
         });
         $this->app->alias(FormFactory::class, 'form.factory');
         $this->app->alias(FormFactory::class, FormFactoryInterface::class);
-
     }
 
     protected function registerBladeDirectives()
@@ -144,6 +146,19 @@ class ServiceProvider extends BaseServiceProvider {
                 return '<?php echo \\' . FormRendererFacade::class .'::'.$method.'('.$expression.'); ?>';
             });
         }
+    }
+
+    protected function registerViewComposer()
+    {
+        $this->app['view']->composer('*', function ($view) {
+            if ($view instanceof View) {
+                foreach ($view->getData() as $key => $value) {
+                    if ($value instanceof Form) {
+                        $view->with($key, $value->createView());
+                    }
+                }
+            }
+        });
     }
 
     /**
