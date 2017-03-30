@@ -10,11 +10,10 @@ class SessionTypeExtension extends AbstractTypeExtension
     /**
      * Constructor.
      *
-     * @param  SessionManager  $sessionManager
      */
-    public function __construct(SessionManager $sessionManager)
+    public function __construct()
     {
-        $this->listener = new SessionListener($sessionManager);
+        $this->listener = new SessionListener();
     }
 
     /**

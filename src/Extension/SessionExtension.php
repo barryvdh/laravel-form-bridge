@@ -1,6 +1,5 @@
 <?php namespace Barryvdh\Form\Extension;
 
-use Illuminate\Session\SessionManager;
 use Symfony\Component\Form\AbstractExtension;
 
 /**
@@ -10,28 +9,13 @@ use Symfony\Component\Form\AbstractExtension;
 class SessionExtension extends AbstractExtension
 {
     /**
-     * @var \Illuminate\Session\SessionManager
-     */
-    protected $session;
-
-    /**
-     * Constructor.
-     *
-     * @param  SessionManager  $sessionManager
-     */
-    public function __construct(SessionManager $sessionManager)
-    {
-        $this->session = $sessionManager;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function loadTypeExtensions()
     {
         return array(
-            new Session\CsrfTypeExtension($this->session),
-            new Session\SessionTypeExtension($this->session),
+            new Session\CsrfTypeExtension,
+            new Session\SessionTypeExtension,
         );
     }
 }

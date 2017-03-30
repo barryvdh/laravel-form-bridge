@@ -9,21 +9,6 @@ use Symfony\Component\Form\FormInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
-    /**
-     * @var \Illuminate\Session\SessionManager
-     */
-    protected $session;
-
-    /**
-     * Constructor.
-     *
-     * @param  SessionManager  $sessionManager
-     */
-    public function __construct(SessionManager $sessionManager)
-    {
-        $this->session = $sessionManager;
-    }
-
     public static function getSubscribedEvents()
     {
         return array(
@@ -41,10 +26,7 @@ class SessionListener implements EventSubscriberInterface
             $fullName = $this->getFullName($rootName, $name);
 
             // Add input from the previous submit
-            if ($form->getName() !== '_token' && $this->session->hasOldInput($fullName)) {
-                // Get old value
-                $value = $this->session->getOldInput($fullName);
-
+            if ($form->getName() !== '_token' && $value = old($fullName)) {
                 // Transform back to good data
                 $value = $this->transformValue($event, $value);
 
@@ -52,9 +34,8 @@ class SessionListener implements EventSubscriberInterface
                 $event->setData($value);
             }
 
-            if ($this->session->has('errors')) {
+            if ($errors = session('errors')) {
                 /** @var \Illuminate\Support\ViewErrorBag $errors */
-                $errors = $this->session->get('errors');
                 if ($errors->has($name)) {
                     $form->addError(new FormError(implode(' ', $errors->get($name))));
                 }

@@ -112,7 +112,7 @@ class ServiceProvider extends BaseServiceProvider {
 
         $this->app->bind('form.extensions', function ($app) {
             return array(
-                $app->make(SessionExtension::class),
+                new SessionExtension(),
                 new HttpExtension(),
                 new EloquentExtension(),
                 new FormValidatorExtension(),
