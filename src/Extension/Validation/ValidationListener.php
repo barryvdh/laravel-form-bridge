@@ -1,7 +1,7 @@
 <?php namespace Barryvdh\Form\Extension\Validation;
 
-use Illuminate\Validation\Rules\In;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
 class ValidationListener implements EventSubscriberInterface
@@ -34,30 +35,51 @@ class ValidationListener implements EventSubscriberInterface
 
     public function validateRules(FormEvent $event)
     {
-        $form = $event->getForm();
-        $config = $form->getConfig();
+        $rules = [];
+        $data = [];
 
-        if ( ! $form->isRoot() && $config->hasOption('rules') ) {
+        if ($event->getForm()->isRoot()) {
+            $root = $event->getForm();
+            foreach ($root->all() as $form) {
+                $config = $form->getConfig();
+                $name = $form->getName();
+                $data[$name] =  $form->getData();
 
-            $rules = $config->getOption('rules');
+                if ($config->hasOption('rules') ) {
 
-            $innerType = $form->getConfig()->getType()->getInnerType();
-            $rules = $this->addTypeRules($innerType, $rules);
+                    $rule = $config->getOption('rules');
+                    $innerType = $form->getConfig()->getType()->getInnerType();
+                    $rule = $this->addTypeRules($innerType, $rule);
 
-            $data = [
-                $form->getName() => $form->getData(),
-            ];
-            $rules = [
-                $form->getName() => $rules,
-            ];
+                    if ($innerType instanceof CollectionType) {
+                        $name .= '.*';
+                    }
+                    $rules[$name] = $rule;
+                }
+            }
 
             $validator = $this->validator->make($data, $rules);
             if ($validator->fails()) {
-                foreach ($validator->messages()->all() as $message) {
-                    $form->addError(new FormError($message));
+                foreach ($validator->getMessageBag()->toArray() as $name => $messages) {
+                    foreach ($messages as $message) {
+                        $form = $this->getByDotted($root, $name);
+                        $form->addError(new FormError($message));
+                    }
                 }
             }
         }
+    }
+
+
+    protected function getByDotted(FormInterface $form, $name)
+    {
+        $parts = explode('.', $name);
+
+        while($name = array_shift($parts)) {
+            $form = $form->get($name);
+        }
+
+        return $form;
     }
 
     protected function addTypeRules(FormTypeInterface $type, array $rules)
