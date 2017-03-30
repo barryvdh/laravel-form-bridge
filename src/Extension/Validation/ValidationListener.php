@@ -18,6 +18,9 @@ class ValidationListener implements EventSubscriberInterface
 {
     protected $validator;
 
+    protected $rules;
+    protected $data;
+
     public function __construct(ValidationFactory $validator)
     {
         $this->validator = $validator;
@@ -35,30 +38,14 @@ class ValidationListener implements EventSubscriberInterface
 
     public function validateRules(FormEvent $event)
     {
-        $rules = [];
-        $data = [];
+        $this->rules = [];
+        $this->data = [];
 
         if ($event->getForm()->isRoot()) {
             $root = $event->getForm();
-            foreach ($root->all() as $form) {
-                $config = $form->getConfig();
-                $name = $form->getName();
-                $data[$name] =  $form->getData();
+            $this->parseChildren($root);
 
-                if ($config->hasOption('rules') ) {
-
-                    $rule = $config->getOption('rules');
-                    $innerType = $form->getConfig()->getType()->getInnerType();
-                    $rule = $this->addTypeRules($innerType, $rule);
-
-                    if ($innerType instanceof CollectionType) {
-                        $name .= '.*';
-                    }
-                    $rules[$name] = $rule;
-                }
-            }
-
-            $validator = $this->validator->make($data, $rules);
+            $validator = $this->validator->make($this->data, $this->rules);
             if ($validator->fails()) {
                 foreach ($validator->getMessageBag()->toArray() as $name => $messages) {
                     foreach ($messages as $message) {
@@ -70,6 +57,32 @@ class ValidationListener implements EventSubscriberInterface
         }
     }
 
+    protected function parseChildren(FormInterface $parent, $parentName = null)
+    {
+        foreach ($parent->all() as $form) {
+            $config = $form->getConfig();
+            $name = $form->getName();
+            $this->data[$name] =  $form->getData();
+
+            if ($config->hasOption('rules') ) {
+
+                $rule = $config->getOption('rules');
+                $innerType = $form->getConfig()->getType()->getInnerType();
+                $rule = $this->addTypeRules($innerType, $rule);
+
+                if ($innerType instanceof CollectionType) {
+                    $name .= '.*';
+                }
+
+                if ($parentName) {
+                    $name = $parentName . '.' . $name;
+                }
+                $this->rules[$name] = $rule;
+            }
+
+            $this->parseChildren($form, $form->getName());
+        }
+    }
 
     protected function getByDotted(FormInterface $form, $name)
     {
