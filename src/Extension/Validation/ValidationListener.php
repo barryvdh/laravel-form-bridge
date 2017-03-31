@@ -18,7 +18,6 @@ class ValidationListener implements EventSubscriberInterface
 {
     protected $validator;
 
-    protected $rules;
     protected $data;
 
     public function __construct(ValidationFactory $validator)
@@ -32,21 +31,38 @@ class ValidationListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
+                FormEvents::PRE_SUBMIT => 'gatherData',
                 FormEvents::POST_SUBMIT => 'validateRules',
             );
     }
 
+    /**
+     * Get the original data, before submitting
+     *
+     * @param FormEvent $event
+     */
+    public function gatherData(FormEvent $event)
+    {
+        $this->data = $event->getData();
+    }
+
+    /**
+     * Find all rules, apply them to the original data and add errors.
+     *
+     * @param FormEvent $event
+     */
     public function validateRules(FormEvent $event)
     {
-        $this->rules = [];
-        $this->data = [];
-
         if ($event->getForm()->isRoot()) {
-            $root = $event->getForm();
-            $this->parseChildren($root);
 
-            $validator = $this->validator->make($this->data, $this->rules);
+            $root = $event->getForm();
+            $rules = $this->findRules($root);
+
+            $validator = $this->validator->make($this->data, $rules);
+
             if ($validator->fails()) {
+
+                // Add all messages to the original name
                 foreach ($validator->getMessageBag()->toArray() as $name => $messages) {
                     foreach ($messages as $message) {
                         $form = $this->getByDotted($root, $name);
@@ -54,15 +70,22 @@ class ValidationListener implements EventSubscriberInterface
                     }
                 }
             }
+
         }
     }
 
-    protected function parseChildren(FormInterface $parent, $parentName = null)
+    /**
+     * Recursively find all rules.
+     *
+     * @param FormInterface $parent
+     * @param array $rules
+     * @return array
+     */
+    protected function findRules(FormInterface $parent, $rules = [])
     {
         foreach ($parent->all() as $form) {
             $config = $form->getConfig();
             $name = $form->getName();
-            $this->data[$name] =  $form->getData();
 
             if ($config->hasOption('rules') ) {
 
@@ -74,16 +97,26 @@ class ValidationListener implements EventSubscriberInterface
                     $name .= '.*';
                 }
 
-                if ($parentName) {
-                    $name = $parentName . '.' . $name;
+                if ( ! $parent->isRoot()) {
+                    $name = $parent->getName() . '.' . $name;
                 }
-                $this->rules[$name] = $rule;
+
+                $rules[$name] = $rule;
             }
 
-            $this->parseChildren($form, $form->getName());
+            $rules = $this->findRules($form, $rules);
         }
+
+        return $rules;
     }
 
+    /**
+     * Recursively get the form using the dotted name.
+     *
+     * @param FormInterface $form
+     * @param $name
+     * @return FormInterface
+     */
     protected function getByDotted(FormInterface $form, $name)
     {
         $parts = explode('.', $name);
@@ -95,6 +128,13 @@ class ValidationListener implements EventSubscriberInterface
         return $form;
     }
 
+    /**
+     * Add default rules based on the type
+     *
+     * @param FormTypeInterface $type
+     * @param array $rules
+     * @return array
+     */
     protected function addTypeRules(FormTypeInterface $type, array $rules)
     {
         if (
