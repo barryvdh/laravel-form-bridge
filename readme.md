@@ -7,13 +7,11 @@ Laravel integration:
  - Add validation errors
  - Translate field names
 
-See for Laravel 5.1 the [0.2 branch](https://github.com/barryvdh/laravel-form-bridge/tree/v0.2.2)
-
 ### Install
  - `composer require barryvdh/laravel-form-bridge`
  - Add `Barryvdh\Form\ServiceProvider::class,` to you ServiceProviders.
- - (optional) Add `'FormRenderer' => Barryvdh\Form\Facade\FormRenderer::class,` to your Facades.
  - (optional) Add `'FormFactory' => Barryvdh\Form\Facade\FormFactory::class,` to your Facades.
+ - (optional) Add `'FormRenderer' => Barryvdh\Form\Facade\FormRenderer::class,` to your Facades.
 
 ### Basic example
 
@@ -26,6 +24,7 @@ Or you can create a Named form, with an empty name.
 If you need to set more options, use the `createBuilder` function instead of `create`, to be able to use `setAction()` etc. You need to call `->getForm()`  to get the actual form instance again.
 
 ```php
+use FormFactory;
 use Illuminate\Http\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -33,31 +32,28 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-Route::any('form', function(Request $request, FormFactoryInterface $factory){
+Route::any('create', function()
+{
     $user = App\User::first();
     
-    $form = $factory->create(FormType::class, $user)
+    $form = FormFactory::create(FormType::class, $user)
         ->add('name', TextType::class)
-        ->add('email', EmailType::class)
+        ->add('email', EmailType::class, [
+            'rules' => 'unique:users,email',
+        )
         ->add('save', SubmitType::class, array('label' => 'Save user'));
 
-    $form->handleRequest($request);
+    $form->handleRequest();
 
-    if ($form->isSubmitted()) {
-        $v = Validator::make($request->get($form->getName()), [
-            'name' => 'required',
-            'email' => 'required|email',
-        ]);
-
-        if ($v->fails()) {
-            return redirect()->back()->withInput()->withErrors($v->errors());
-        }
-        
+    if ($form->isSubmitted() && $form->isValid()) {
+            
         // Save the user with the new mapped data
         $user->save();
+        
+        return redirect('home')->withStatus('User saved!');
     }
 
-    return view('form', ['form' => $form->createView()]);
+    return view('user.create', compact('form'));
 });
 ```
 
@@ -68,6 +64,7 @@ Use the following in your Blade templates:
 @form_widget($form)
 @form_end($form)
 ```
+
 Other directives are: @form, @form_label, @form_errors, @form_rest and @form_row
 
 ```php
