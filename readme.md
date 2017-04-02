@@ -164,7 +164,7 @@ BelongsToMany behaves differently, because it isn't an actual attribute on your 
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 $builder->add('users', ChoiceType::class, [
-    'choices' => \App\User::lists('name', 'id'),
+    'choices' => \App\User::pluck('name', 'id'),
     'multiple' => true,
     'mapped' => false,
     'expanded' => true, // true=checkboxes, false=multi select
