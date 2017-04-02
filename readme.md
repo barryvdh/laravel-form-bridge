@@ -40,13 +40,12 @@ Route::any('create', function()
         ->add('name', TextType::class)
         ->add('email', EmailType::class, [
             'rules' => 'unique:users,email',
-        )
-        ->add('save', SubmitType::class, array('label' => 'Save user'));
+        ])
+        ->add('save', SubmitType::class, ['label' => 'Save user']);
 
     $form->handleRequest();
 
     if ($form->isSubmitted() && $form->isValid()) {
-            
         // Save the user with the new mapped data
         $user->save();
         
@@ -120,29 +119,28 @@ class UserController extends Controller{
     use ValidatesForms, CreatesForms;
     
     public function anyIndex(Request $request)
-	{
-		$user = User::first();
+    {
+        $user = User::first();
 
         $form = $this->createFormBuilder($user)
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
-            ->add('save', SubmitType::class, array('label' => 'Save user'))
+            ->add('save', SubmitType::class, ['label' => 'Save user'])
             ->getForm();
 
-		$form->handleRequest($request);
+        $form->handleRequest($request);
 
-		if ($form->isSubmitted()) {
+        if ($form->isSubmitted()) {
+            $this->validateForm($form, $request, [
+                'name' => 'required',
+                'email' => 'required|email',
+            ]);
 
-			$this->validateForm($form, $request, [
-			  'name' => 'required',
-			  'email' => 'required|email',
-			]);
+            $user->save();
+        }
 
-			$user->save();
-		}
-
-		return view('user', ['form' => $form->createView()]);
-	}    
+        return view('user', ['form' => $form->createView()]);
+    }
 }
 ```
 
@@ -152,9 +150,9 @@ Creating a named form:
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 $form = $this->createNamed('user', FormType::class, $user) 
-  ->add('name', TextType::class)
-  ->add('email', EmailType::class)
-  ->add('save', SubmitType::class, array('label' => 'Save user'));
+    ->add('name', TextType::class)
+    ->add('email', EmailType::class)
+    ->add('save', SubmitType::class, ['label' => 'Save user']);
 ```
 
 See http://symfony.com/doc/current/book/forms.html for more information.
@@ -165,9 +163,8 @@ BelongsToMany behaves differently, because it isn't an actual attribute on your 
 ```php
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
-$builder
-->add('users', ChoiceType::class, [
-    'choices' => \App\User::lists('name', 'id'),
+$builder->add('users', ChoiceType::class, [
+    'choices' => \App\User::pluck('name', 'id'),
     'multiple' => true,
     'mapped' => false,
     'expanded' => true, // true=checkboxes, false=multi select
@@ -204,42 +201,42 @@ You can use the `file` type in the FormBuilder, and use the magic `getFile()` an
 ```php
 Class User extends Model {
 
-	/** @var UploadedFile  */
-	private $file;
-	
-	public function getFile()
-	{
-		return $this->file;
-	}
-	
-	public function setFile(UploadedFile $file = null)
-	{
-		$this->file = $file;
-	}
-	
-	public function upload()
-	{
-		    // the file property can be empty if the field is not required
-		    if (null === $this->getFile()) {
-		        return;
-		    }
-		
-		    // use the original file name here but you should
-		    // sanitize it at least to avoid any security issues
-		
-		    // move takes the target directory and then the
-		    // target filename to move to
-		    $this->getFile()->move(
-		        $this->getUploadRootDir(),
-		        $this->getFile()->getClientOriginalName()
-		    );
-		
-		    // set the path property to the filename where you've saved the file
-		    $this->path = $this->getFile()->getClientOriginalName();
-		
-		    // clean up the file property as you won't need it anymore
-		    $this->file = null;
-	}
+    /** @var UploadedFile  */
+    private $file;
+
+    public function getFile()
+    {
+        return $this->file;
+    }
+
+    public function setFile(UploadedFile $file = null)
+    {
+        $this->file = $file;
+    }
+
+    public function upload()
+    {
+        // the file property can be empty if the field is not required
+        if (null === $this->getFile()) {
+            return;
+        }
+
+        // use the original file name here but you should
+        // sanitize it at least to avoid any security issues
+
+        // move takes the target directory and then the
+        // target filename to move to
+        $this->getFile()->move(
+            $this->getUploadRootDir(),
+            $this->getFile()->getClientOriginalName()
+        );
+
+        // set the path property to the filename where you've saved the file
+        $this->path = $this->getFile()->getClientOriginalName();
+
+        // clean up the file property as you won't need it anymore
+        $this->file = null;
+    }
 }
 ```
 
@@ -254,14 +251,14 @@ $user = User::first();
 $form = $this->createFormBuilder($user)
     ->add('name', TextType::class)
     ->add('file', FileType::class)
-    ->add('save', SubmitType::class, array('label' => 'Save user'))
+    ->add('save', SubmitType::class, ['label' => 'Save user'])
     ->getForm();
     
- $form->handleRequest($request);
- 
- if ($form->isValid()) {
-  	$user->upload();
-        $user->save();
+$form->handleRequest($request);
+
+if ($form->isValid()) {
+    $user->upload();
+    $user->save();
 }
 ```
 
