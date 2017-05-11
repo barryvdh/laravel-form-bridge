@@ -22,8 +22,8 @@ use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Bridge\Twig\Extension\FormExtension;
 
-class ServiceProvider extends BaseServiceProvider {
-
+class ServiceProvider extends BaseServiceProvider
+{
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -123,7 +123,7 @@ class ServiceProvider extends BaseServiceProvider {
             return new ResolvedFormTypeFactory();
         });
 
-        $this->app->singleton(FormFactory::class, function($app) {
+        $this->app->singleton(FormFactory::class, function ($app) {
             return Forms::createFormFactoryBuilder()
                 ->addExtensions($app['form.extensions'])
                 ->addTypeExtensions($app['form.type.extensions'])
@@ -138,12 +138,21 @@ class ServiceProvider extends BaseServiceProvider {
     protected function registerBladeDirectives()
     {
         Blade::directive('form', function ($expression) {
-            return '<?php echo \\' . FormRendererFacade::class .'::form('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::form(%s); ?>',
+                FormRendererFacade::class,
+                trim($expression, '()')
+            );
         });
 
         foreach (['start', 'end', 'widget', 'errors', 'label', 'row', 'rest'] as $method) {
-            Blade::directive('form_' . $method, function ($expression) use($method) {
-                return '<?php echo \\' . FormRendererFacade::class .'::'.$method.'('.$expression.'); ?>';
+            Blade::directive('form_' . $method, function ($expression) use ($method) {
+                return sprintf(
+                    '<?php echo \\%s::%s(%s); ?>',
+                    FormRendererFacade::class,
+                    $method,
+                    trim($expression, '()')
+                );
             });
         }
     }
