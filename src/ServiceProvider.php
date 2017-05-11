@@ -139,7 +139,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         Blade::directive('form', function ($expression) {
             return sprintf(
-                '<?php echo \\%s::form%s; ?>',
+                trim('<?php echo \\%s::form(%s); ?>', '()'),
                 FormRendererFacade::class,
                 $expression
             );
@@ -148,7 +148,7 @@ class ServiceProvider extends BaseServiceProvider
         foreach (['start', 'end', 'widget', 'errors', 'label', 'row', 'rest'] as $method) {
             Blade::directive('form_' . $method, function ($expression) use ($method) {
                 return sprintf(
-                    '<?php echo \\%s::%s%s; ?>',
+                    trim('<?php echo \\%s::%s(%s); ?>', '()'),
                     FormRendererFacade::class,
                     $method,
                     $expression
