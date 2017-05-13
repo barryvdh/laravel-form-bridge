@@ -157,31 +157,66 @@ class ServiceProvider extends BaseServiceProvider
         }
 
         Blade::directive('formStart', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::start('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'start',
+                trim($expression, '()')
+            );
         });
 
         Blade::directive('formEnd', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::end('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'end',
+                trim($expression, '()')
+            );
         });
 
         Blade::directive('formWidget', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::widget('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'widget',
+                trim($expression, '()')
+            );
         });
 
         Blade::directive('formErrors', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::errors('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'errors',
+                trim($expression, '()')
+            );
         });
 
         Blade::directive('formLabel', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::label('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'label',
+                trim($expression, '()')
+            );
         });
 
         Blade::directive('formRow', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::row('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'row',
+                trim($expression, '()')
+            );
         });
 
         Blade::directive('formRest', function ($expression) {
-            return '<?php echo \\' . FormRenderer::class .'::rest('.$expression.'); ?>';
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'rest',
+                trim($expression, '()')
+            );
         });
     }
 
