@@ -155,6 +155,34 @@ class ServiceProvider extends BaseServiceProvider
                 );
             });
         }
+
+        Blade::directive('formStart', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::start('.$expression.'); ?>';
+        });
+
+        Blade::directive('formEnd', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::end('.$expression.'); ?>';
+        });
+
+        Blade::directive('formWidget', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::widget('.$expression.'); ?>';
+        });
+
+        Blade::directive('formErrors', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::errors('.$expression.'); ?>';
+        });
+
+        Blade::directive('formLabel', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::label('.$expression.'); ?>';
+        });
+
+        Blade::directive('formRow', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::row('.$expression.'); ?>';
+        });
+
+        Blade::directive('formRest', function ($expression) {
+            return '<?php echo \\' . FormRenderer::class .'::rest('.$expression.'); ?>';
+        });
     }
 
     protected function registerViewComposer()
