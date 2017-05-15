@@ -59,36 +59,36 @@ Route::any('create', function()
 Use the following in your Blade templates:
 
 ```php
-@form_start($form)
-@form_widget($form)
-@form_end($form)
+@formStart($form)
+@formWidget($form)
+@formEnd($form)
 ```
 
-Other directives are: @form, @form_label, @form_errors, @form_rest and @form_row
+Other directives are: @form, @formLabel, @formErrors, @formRest and @formRow
 
 ```php
 @form($form)
 ```
 
 ```php
-@form_start($form)
+@formStart($form)
 
 <h2>Name</h2>
-@form_label($form['name'], 'Your name')
-@form_widget($form['name'], ['attr' => ['class' => 'name-input']])
+@formLabel($form['name'], 'Your name')
+@formWidget($form['name'], ['attr' => ['class' => 'name-input']])
 
 <h2>Rest</h2>
-@form_rest($form)
+@formRest($form)
 
-@form_end($form)
+@formEnd($form)
 ```
 
 Or use the following in your Twig templates to render the view:
 
 ```twig
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+{{ formStart(form) }}
+{{ formWidget(form) }}
+{{ formEnd(form) }}
 ```
 
 See http://symfony.com/doc/current/book/forms.html#form-rendering-template for more options.

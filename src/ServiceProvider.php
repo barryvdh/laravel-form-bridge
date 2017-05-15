@@ -155,6 +155,69 @@ class ServiceProvider extends BaseServiceProvider
                 );
             });
         }
+
+        Blade::directive('formStart', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'start',
+                trim($expression, '()')
+            );
+        });
+
+        Blade::directive('formEnd', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'end',
+                trim($expression, '()')
+            );
+        });
+
+        Blade::directive('formWidget', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'widget',
+                trim($expression, '()')
+            );
+        });
+
+        Blade::directive('formErrors', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'errors',
+                trim($expression, '()')
+            );
+        });
+
+        Blade::directive('formLabel', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'label',
+                trim($expression, '()')
+            );
+        });
+
+        Blade::directive('formRow', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'row',
+                trim($expression, '()')
+            );
+        });
+
+        Blade::directive('formRest', function ($expression) {
+            return sprintf(
+                '<?php echo \\%s::%s(%s); ?>',
+                FormRendererFacade::class,
+                'rest',
+                trim($expression, '()')
+            );
+        });
     }
 
     protected function registerViewComposer()
