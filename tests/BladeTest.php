@@ -19,20 +19,24 @@ class BladeTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['router']->get('create', function () {
+        $app['router']->any('create', function () {
             $user = [];
 
             $form = FormFactory::create(FormType::class, $user)
                 ->add('name', TextType::class)
                 ->add('email', EmailType::class, [
-                    'rules' => 'unique:users,email',
+                    'rules' => 'email',
                 ])
                 ->add('save', SubmitType::class, ['label' => 'Save user']);
 
             $form->handleRequest();
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                return 'saved';
+            if ($form->isSubmitted()) {
+                if ($form->isValid()) {
+                    return 'valid';
+                }
+
+                return 'invalid';
             }
 
             return view('forms::create', compact('form'));
@@ -49,5 +53,37 @@ class BladeTest extends TestCase
         $crawler = $this->call('GET', 'create');
 
         $this->assertContains('<form name="form" method="post">', $crawler->getContent());
+    }
+
+    /**
+     * Test GET routes.
+     *
+     * @test
+     */
+    public function testPostFormInvalid()
+    {
+        $crawler = $this->call('POST', 'create', [
+            'form' => ['save' => true]
+        ]);
+
+        $this->assertEquals('invalid', $crawler->getContent());
+    }
+
+    /**
+     * Test GET routes.
+     *
+     * @test
+     */
+    public function testPostForm()
+    {
+        $crawler = $this->call('POST', 'create', [
+            'form' => [
+                'name' => 'Barry',
+                'email' => 'barryvdh@gmail.com',
+                'save' => true
+            ]
+        ]);
+
+        $this->assertEquals('valid', $crawler->getContent());
     }
 }
