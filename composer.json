@@ -22,9 +22,26 @@
             "Barryvdh\\Form\\": "src/"
         }
     },
+    "autoload-dev": {
+        "classmap": [
+            "tests"
+        ]
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "0.3-dev"
         }
-    }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.3",
+        "orchestra/testbench": "3.x",
+        "phpunit/phpunit": "^4.8|^5.2"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check-style": "phpcs -p --standard=PSR2 src/",
+        "fix-style": "phpcbf -p --standard=PSR2 src/"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

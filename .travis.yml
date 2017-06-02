@@ -1,0 +1,35 @@
+language: php
+
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+
+env:
+  global:
+    - setup=stable
+    - laravel=5.x
+
+matrix:
+  include:
+    - php: 5.6
+      env: setup=lowest
+    - php: 5.6
+      env: laravel=5.3.x
+    - php: 7.0
+      env: laravel=5.5.x
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+install:
+  - composer require illuminate/support:${laravel} --no-update
+  - if [[ $setup = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable; fi
+  - if [[ $setup = 'lowest' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-lowest --prefer-stable; fi
+
+script:
+  - vendor/bin/phpunit
+  - vendor/bin/phpcs --standard=psr2 src/
