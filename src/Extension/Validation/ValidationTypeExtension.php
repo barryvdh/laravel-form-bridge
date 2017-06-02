@@ -73,12 +73,11 @@ class ValidationTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ( ! $form->isRoot() && isset($options['rules']) ) {
+        if (! $form->isRoot() && isset($options['rules'])) {
             $rules = $options['rules'];
 
             $innerType = $form->getConfig()->getType()->getInnerType();
-            if (
-                ($innerType instanceof NumberType || $innerType instanceof IntegerType)
+            if (($innerType instanceof NumberType || $innerType instanceof IntegerType)
                 && !in_array('numeric', $rules)
             ) {
                 $rules[] = 'numeric';

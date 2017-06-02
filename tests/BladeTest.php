@@ -32,8 +32,6 @@ class BladeTest extends TestCase
             $form->handleRequest();
 
             if ($form->isSubmitted() && $form->isValid()) {
-
-
                 return 'saved';
             }
 
@@ -51,7 +49,5 @@ class BladeTest extends TestCase
         $crawler = $this->call('GET', 'create');
 
         $this->assertContains('<form name="form" method="post">', $crawler->getContent());
-
     }
-
 }

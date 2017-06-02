@@ -21,7 +21,7 @@ class SessionListener implements EventSubscriberInterface
         $form = $event->getForm();
         $rootName = $form->getRoot()->getName();
 
-        if ( ! $form->isRoot() && $parent = $form->getParent()) {
+        if (! $form->isRoot() && $parent = $form->getParent()) {
             $name = $this->getDottedName($form);
             $fullName = $this->getFullName($rootName, $name);
 

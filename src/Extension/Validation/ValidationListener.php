@@ -54,13 +54,11 @@ class ValidationListener implements EventSubscriberInterface
     public function validateRules(FormEvent $event)
     {
         if ($event->getForm()->isRoot()) {
-
             $root = $event->getForm();
             $rules = $this->findRules($root);
             $validator = $this->validator->make($this->data, $rules);
 
             if ($validator->fails()) {
-
                 // Add all messages to the original name
                 foreach ($validator->getMessageBag()->toArray() as $name => $messages) {
                     foreach ($messages as $message) {
@@ -69,7 +67,6 @@ class ValidationListener implements EventSubscriberInterface
                     }
                 }
             }
-
         }
     }
 
@@ -87,19 +84,19 @@ class ValidationListener implements EventSubscriberInterface
             $name = $form->getName();
             $innerType = $form->getConfig()->getType()->getInnerType();
 
-            if ($config->hasOption('rules') ) {
+            if ($config->hasOption('rules')) {
                 if ($innerType instanceof CollectionType) {
                     $name .= '.*';
                 }
 
-                if ( ! $parent->isRoot()) {
+                if (! $parent->isRoot()) {
                     $name = $parent->getName() . '.' . $name;
                 }
 
                 $rules[$name] = $this->addTypeRules($innerType, $config->getOption('rules'));
             }
 
-            if ($innerType instanceof CollectionType){
+            if ($innerType instanceof CollectionType) {
                 $rules = $this->findRules($form, $rules);
             }
         }
@@ -118,7 +115,7 @@ class ValidationListener implements EventSubscriberInterface
     {
         $parts = explode('.', $name);
 
-        while($name = array_shift($parts)) {
+        while ($name = array_shift($parts)) {
             $form = $form->get($name);
         }
 
@@ -134,22 +131,19 @@ class ValidationListener implements EventSubscriberInterface
      */
     protected function addTypeRules(FormTypeInterface $type, array $rules)
     {
-        if (
-            ($type instanceof NumberType || $type instanceof IntegerType)
+        if (($type instanceof NumberType || $type instanceof IntegerType)
             && !in_array('numeric', $rules)
         ) {
             $rules[] = 'numeric';
         }
 
-        if (
-            ($type instanceof EmailType)
+        if (($type instanceof EmailType)
             && !in_array('email', $rules)
         ) {
             $rules[] = 'email';
         }
 
-        if (
-            ($type instanceof TextType || $type instanceof TextareaType)
+        if (($type instanceof TextType || $type instanceof TextareaType)
             && !in_array('string', $rules)
         ) {
             $rules[] = 'string';

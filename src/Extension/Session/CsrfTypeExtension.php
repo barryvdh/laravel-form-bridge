@@ -7,7 +7,8 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 
-class CsrfTypeExtension extends AbstractTypeExtension{
+class CsrfTypeExtension extends AbstractTypeExtension
+{
 
     /**
      * Adds a CSRF field to the root form view.
@@ -18,14 +19,13 @@ class CsrfTypeExtension extends AbstractTypeExtension{
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if ( !$view->parent && $options['compound']) {
+        if (!$view->parent && $options['compound']) {
             $factory = $form->getConfig()->getFormFactory();
             $csrfForm = $factory->createNamed('_token', HiddenType::class, csrf_token(), array(
                 'mapped' => false,
             ));
             $view->children['_token'] = $csrfForm->createView(null);
         }
-
     }
 
     /**

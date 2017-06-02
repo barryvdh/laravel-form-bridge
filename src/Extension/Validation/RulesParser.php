@@ -591,5 +591,4 @@ class RulesParser
         }
         return str_getcsv($parameter);
     }
-
 }

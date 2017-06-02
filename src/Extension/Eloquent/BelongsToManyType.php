@@ -8,7 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 /**
  * @deprecated Use a 'ChoiceType' with multiple=true, mapped=false
  */
-class BelongsToManyType extends AbstractType {
+class BelongsToManyType extends AbstractType
+{
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
