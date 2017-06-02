@@ -57,7 +57,6 @@ class ValidationListener implements EventSubscriberInterface
 
             $root = $event->getForm();
             $rules = $this->findRules($root);
-
             $validator = $this->validator->make($this->data, $rules);
 
             if ($validator->fails()) {
@@ -86,13 +85,9 @@ class ValidationListener implements EventSubscriberInterface
         foreach ($parent->all() as $form) {
             $config = $form->getConfig();
             $name = $form->getName();
+            $innerType = $form->getConfig()->getType()->getInnerType();
 
             if ($config->hasOption('rules') ) {
-
-                $rule = $config->getOption('rules');
-                $innerType = $form->getConfig()->getType()->getInnerType();
-                $rule = $this->addTypeRules($innerType, $rule);
-
                 if ($innerType instanceof CollectionType) {
                     $name .= '.*';
                 }
@@ -101,10 +96,12 @@ class ValidationListener implements EventSubscriberInterface
                     $name = $parent->getName() . '.' . $name;
                 }
 
-                $rules[$name] = $rule;
+                $rules[$name] = $this->addTypeRules($innerType, $config->getOption('rules'));
             }
 
-            $rules = $this->findRules($form, $rules);
+            if ($innerType instanceof CollectionType){
+                $rules = $this->findRules($form, $rules);
+            }
         }
 
         return $rules;
