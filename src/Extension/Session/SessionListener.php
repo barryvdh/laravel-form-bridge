@@ -1,5 +1,6 @@
 <?php namespace Barryvdh\Form\Extension\Session;
 
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Illuminate\Session\SessionManager;
@@ -31,7 +32,9 @@ class SessionListener implements EventSubscriberInterface
                 $value = $this->transformValue($event, $value);
 
                 // Store on the form
-                $event->setData($value);
+                if ($this->validData($form, $value)) {
+                    $event->setData($value);
+                }
             }
 
             if ($errors = session('errors')) {
@@ -81,5 +84,27 @@ class SessionListener implements EventSubscriberInterface
         }
 
         return $value;
+    }
+
+    /**
+     * Make sure the data should be set.
+     *
+     * @param FormInterface $form
+     * @param mixed         $value
+     * @return bool
+     */
+    protected function validData(FormInterface $form, $value)
+    {
+        // Make sure the form is not a collection type.
+        $notACollectionType = ! ($form->getConfig()->getType()->getInnerType() instanceof CollectionType);
+
+        // Value is not an array.
+        $notAnArray = ! is_array($value);
+
+        // Data class is not set.
+        $dataClassIsNull = is_null($form->getConfig()->getDataClass());
+
+        // If all these cases are true we set the data.
+        return $notACollectionType && $notAnArray && $dataClassIsNull;
     }
 }
