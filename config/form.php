@@ -18,8 +18,20 @@ return array(
     */
     'theme' => 'bootstrap_3_layout.html.twig',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Form template directories
+    |--------------------------------------------------------------------------
+    |
+    | Add custom template directories to render the form.
+    |
+    | See http://symfony.com/doc/current/form/form_customization.html
+    */
+    'template_directories' => [
+        // eg: resource_path('views/form')
+    ],
+
     'defaults' => [
         'required' => true,
     ]
-
 );
