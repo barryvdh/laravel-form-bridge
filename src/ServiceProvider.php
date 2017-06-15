@@ -51,9 +51,7 @@ class ServiceProvider extends BaseServiceProvider
             $twig->setLoader($loader);
         }
 
-        $reflected = new \ReflectionClass(FormExtension::class);
-        $path = dirname($reflected->getFileName()).'/../Resources/views/Form';
-        $loader->addLoader(new \Twig_Loader_Filesystem($path));
+        $loader->addLoader(new \Twig_Loader_Filesystem($this->getTemplateDirectories()));
 
         /** @var TwigRenderer $renderer */
         $renderer = $this->app->make(TwigRenderer::class);
@@ -251,5 +249,19 @@ class ServiceProvider extends BaseServiceProvider
             'form.factory',
             'form.extensions',
         );
+    }
+
+    /**
+     * Get directories to lookup for form themes
+     *
+     * @return string[]
+     */
+    protected function getTemplateDirectories()
+    {
+        $reflected = new \ReflectionClass(FormExtension::class);
+        $path = dirname($reflected->getFileName()) . '/../Resources/views/Form';
+        $dirs = (array)$this->app['config']->get('form.template_directories', []);
+        $dirs = array_merge([$path], $dirs);
+        return $dirs;
     }
 }
