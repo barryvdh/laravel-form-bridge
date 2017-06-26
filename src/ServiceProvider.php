@@ -40,7 +40,7 @@ class ServiceProvider extends BaseServiceProvider
             /** @var \Twig_Environment $twig */
             $twig = $this->app->make(\Twig_Environment::class);
         } else {
-            $twig = new \Twig_Environment(new \Twig_Loader_Chain([]));
+            $twig = $this->createTwigEnvironment();
         }
 
         $loader = $twig->getLoader();
@@ -263,5 +263,21 @@ class ServiceProvider extends BaseServiceProvider
         $dirs = (array)$this->app['config']->get('form.template_directories', []);
         $dirs = array_merge([$path], $dirs);
         return $dirs;
+    }
+    
+    /**
+     * Create a new TwigEnvironment
+     *
+     * @return \Twig_Environment
+     */
+    protected function createTwigEnvironment()
+    {
+        $loader = new \Twig_Loader_Chain([]);
+
+        $environment = new \Twig_Environment($loader, [
+            'cache' => storage_path('framework/views/twig'),
+        ]);
+
+        return $environment;
     }
 }
