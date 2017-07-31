@@ -213,7 +213,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $loader = new \Twig_Loader_Chain([]);
 
-        $environment = new \Twig_Environment($loader, new \Twig_Environment($loader, (array) $this->app['config']->get('form.twig_options', [])));
+        $environment = new \Twig_Environment($loader, (array)$this->app['config']->get('form.twig_options', []));
 
         return $environment;
     }
