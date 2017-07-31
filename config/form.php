@@ -33,5 +33,9 @@ return array(
 
     'defaults' => [
         'required' => true,
+    ],
+
+    'twig_options' => [
+        'cache' => storage_path('framework/views/twig')
     ]
 );
