@@ -68,7 +68,13 @@ class ServiceProvider extends BaseServiceProvider
         $twig->addExtension(new FormExtension());
 
         // trans filter is used in the forms
-        $twig->addFilter(new \Twig_SimpleFilter('trans', 'trans'));
+        $twig->addFilter(new \Twig_SimpleFilter('trans', function($id = null, $replace = [], $locale = null) {
+            if (empty($id)) {
+                return '';
+            }
+            return app('translator')->trans($id, $replace, $locale);
+        }));
+        
         // csrf_token needs to be replaced for Laravel
         $twig->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
 
