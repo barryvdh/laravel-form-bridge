@@ -68,7 +68,7 @@ class ServiceProvider extends BaseServiceProvider
         $twig->addExtension(new FormExtension());
 
         // trans filter is used in the forms
-        $twig->addFilter(new \Twig_SimpleFilter('trans', function($id = null, $replace = [], $locale = null) {
+        $twig->addFilter(new \Twig_SimpleFilter('trans', function ($id = null, $replace = [], $locale = null) {
             if (empty($id)) {
                 return '';
             }
