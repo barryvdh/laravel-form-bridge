@@ -24,8 +24,6 @@ trait ValidatesForms
         $data = $form->getName() ? $request->offsetGet($form->getName()) : $request->all();
         $validator = $this->getValidationFactory()->make($data, $rules, $messages);
 
-        if ($validator->fails()) {
-            $this->throwValidationException($request, $validator);
-        }
+        $validator->validate();
     }
 }
