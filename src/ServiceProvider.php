@@ -34,13 +34,8 @@ class ServiceProvider extends BaseServiceProvider
         $configPath = __DIR__ . '/../config/form.php';
         $this->publishes([$configPath => config_path('form.php')], 'config');
 
-        if ($this->app->bound(\Twig_Environment::class)) {
-            /** @var \Twig_Environment $twig */
-            $twig = $this->app->make(\Twig_Environment::class);
-        } else {
-            $twig = $this->createTwigEnvironment();
-        }
 
+        $twig = $this->getTwigEnvironment();
         $loader = $twig->getLoader();
 
         // If the loader is not already a chain, make it one
@@ -87,7 +82,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->singleton(TwigRendererEngine::class, function ($app) {
             $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
-            return new TwigRendererEngine($theme, $app->make(\Twig_Environment::class));
+            return new TwigRendererEngine($theme, $this->getTwigEnvironment());
         });
 
         $this->app->singleton(\Symfony\Component\Form\FormRenderer::class, function ($app) {
@@ -203,20 +198,22 @@ class ServiceProvider extends BaseServiceProvider
         $dirs = array_merge([$path], $dirs);
         return $dirs;
     }
-    
+
+
     /**
-     * Create a new TwigEnvironment
+     * Get or create a new TwigEnvironment
      *
      * @return \Twig_Environment
      */
-    protected function createTwigEnvironment()
+    protected function getTwigEnvironment()
     {
-        $loader = new \Twig_Loader_Chain([]);
+        if ($this->app->bound(\Twig_Environment::class)) {
+            /** @var \Twig_Environment $twig */
+            return $this->app->make(\Twig_Environment::class);
+        }
 
-        $environment = new \Twig_Environment($loader, [
+        return new \Twig_Environment(new \Twig_Loader_Chain([]), [
             'cache' => storage_path('framework/views/twig'),
         ]);
-
-        return $environment;
     }
 }
