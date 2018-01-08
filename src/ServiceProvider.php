@@ -7,16 +7,14 @@ use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
 use Illuminate\View\View;
-use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
-use Symfony\Bridge\Twig\Form\TwigRendererInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\Forms;
-use Symfony\Bridge\Twig\Form\TwigRenderer;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
+use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
 use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -53,14 +51,9 @@ class ServiceProvider extends BaseServiceProvider
 
         $loader->addLoader(new \Twig_Loader_Filesystem($this->getTemplateDirectories()));
 
-        /** @var TwigRenderer $renderer */
-        $renderer = $this->app->make(TwigRenderer::class);
-        $renderer->setEnvironment($twig);
-
-
         $twig->addRuntimeLoader(new \Twig_FactoryRuntimeLoader(array(
-            TwigRenderer::class => function () {
-                return $this->app->make(TwigRenderer::class);
+            \Symfony\Component\Form\FormRenderer::class => function () {
+                return $this->app->make(\Symfony\Component\Form\FormRenderer::class);
             }
         )));
 
@@ -94,14 +87,15 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->singleton(TwigRendererEngine::class, function ($app) {
             $theme = (array) $app['config']->get('form.theme', 'bootstrap_3_layout.html.twig');
-            return new TwigRendererEngine($theme);
+            return new TwigRendererEngine($theme, $app->make(\Twig_Environment::class));
         });
 
-        $this->app->singleton(TwigRenderer::class, function ($app) {
+        $this->app->singleton(\Symfony\Component\Form\FormRenderer::class, function ($app) {
             $renderer = $app->make(TwigRendererEngine::class);
-            return new TwigRenderer($renderer);
+            return new \Symfony\Component\Form\FormRenderer($renderer);
         });
-        $this->app->alias(TwigRenderer::class, FormRendererInterface::class);
+
+        $this->app->alias( \Symfony\Component\Form\FormRenderer::class, FormRendererInterface::class);
 
         $this->app->bind('form.type.extensions', function ($app) {
             return array(
@@ -187,8 +181,8 @@ class ServiceProvider extends BaseServiceProvider
             FormFactoryInterface::class,
             TwigRendererEngine::class,
             TwigRendererEngineInterface::class,
-            TwigRenderer::class,
-            TwigRendererInterface::class,
+            \Symfony\Component\Form\FormRenderer::class,
+            \Symfony\Component\Form\FormRendererInterface::class,
             FormRendererInterface::class,
             FormFactoryInterface::class,
             'form.factory',
