@@ -90,7 +90,7 @@ class ServiceProvider extends BaseServiceProvider
             return new \Symfony\Component\Form\FormRenderer($renderer);
         });
 
-        $this->app->alias( \Symfony\Component\Form\FormRenderer::class, FormRendererInterface::class);
+        $this->app->alias(\Symfony\Component\Form\FormRenderer::class, FormRendererInterface::class);
 
         $this->app->bind('form.type.extensions', function ($app) {
             return array(
