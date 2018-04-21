@@ -56,7 +56,7 @@ class ValidationListener implements EventSubscriberInterface
         if ($event->getForm()->isRoot()) {
             $root = $event->getForm();
             $rules = $this->findRules($root);
-            $validator = $this->validator->make($this->data, $rules);
+            $validator = $this->validator->make($this->data ?: [], $rules);
 
             if ($validator->fails()) {
                 // Add all messages to the original name
