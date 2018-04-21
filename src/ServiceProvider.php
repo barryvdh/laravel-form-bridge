@@ -90,7 +90,7 @@ class ServiceProvider extends BaseServiceProvider
             return new \Symfony\Component\Form\FormRenderer($renderer);
         });
 
-        $this->app->alias( \Symfony\Component\Form\FormRenderer::class, FormRendererInterface::class);
+        $this->app->alias(\Symfony\Component\Form\FormRenderer::class, FormRendererInterface::class);
 
         $this->app->bind('form.type.extensions', function ($app) {
             return array(
@@ -207,13 +207,15 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function getTwigEnvironment()
     {
-        if ($this->app->bound(\Twig_Environment::class)) {
-            /** @var \Twig_Environment $twig */
-            return $this->app->make(\Twig_Environment::class);
+        if (! $this->app->bound(\Twig_Environment::class)) {
+            $this->app->singleton(\Twig_Environment::class, function () {
+                return new \Twig_Environment(new \Twig_Loader_Chain([]), [
+                    'cache' => storage_path('framework/views/twig'),
+                ]);
+            });
         }
 
-        return new \Twig_Environment(new \Twig_Loader_Chain([]), [
-            'cache' => storage_path('framework/views/twig'),
-        ]);
+        /** @var \Twig_Environment $twig */
+        return $this->app->make(\Twig_Environment::class);
     }
 }
