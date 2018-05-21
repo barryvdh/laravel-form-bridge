@@ -36,7 +36,6 @@ class SessionListener implements EventSubscriberInterface
 
             // Add input from the previous submit
             if ($form->getName() !== '_token' && $value !== static::UNDEFINED) {
-
                 // Transform back to good data
                 $value = $this->transformValue($event, $value);
 
@@ -102,7 +101,7 @@ class SessionListener implements EventSubscriberInterface
         }
 
         // Map the models to correct values
-        foreach($config->getModelTransformers() as $transformer) {
+        foreach ($config->getModelTransformers() as $transformer) {
             $value = $transformer->reverseTransform($value);
         }
 
