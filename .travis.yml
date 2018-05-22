@@ -1,9 +1,9 @@
 language: php
 
 php:
-  - 5.6
   - 7.0
   - 7.1
+  - 7.2
 
 env:
   global:
@@ -12,10 +12,6 @@ env:
 
 matrix:
   include:
-    - php: 5.6
-      env: setup=lowest
-    - php: 5.6
-      env: laravel=5.3.x
     - php: 7.0
       env: laravel=5.5.x
 
