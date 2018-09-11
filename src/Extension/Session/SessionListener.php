@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvents;
@@ -97,12 +98,20 @@ class SessionListener implements EventSubscriberInterface
 
         // Reverse them all..
         foreach ($config->getViewTransformers() as $transformer) {
-            $value = $transformer->reverseTransform($value);
+            try {
+                $value = $transformer->reverseTransform($value);
+            } catch (TransformationFailedException $e) {
+                //
+            }
         }
 
         // Map the models to correct values
         foreach ($config->getModelTransformers() as $transformer) {
-            $value = $transformer->reverseTransform($value);
+            try {
+                $value = $transformer->reverseTransform($value);
+            } catch (TransformationFailedException $e) {
+                //
+            }
         }
 
         return $value;
