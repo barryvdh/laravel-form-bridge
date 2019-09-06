@@ -39,8 +39,7 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.3",
-        "orchestra/testbench": "3.x",
-        "phpunit/phpunit": "^4.8|^5.2|^6"
+        "orchestra/testbench": "^3"
     },
     "scripts": {
         "test": "phpunit",
