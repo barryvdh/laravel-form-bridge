@@ -1,4 +1,4 @@
-## Laravel 5 Form Bridge
+## Laravel Form Bridge
 
 See http://symfony.com/doc/current/forms.html
 
