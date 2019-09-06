@@ -60,7 +60,7 @@ class ServiceProvider extends BaseServiceProvider
             if (empty($id)) {
                 return '';
             }
-            return app('translator')->trans($id, $replace, $locale);
+            return app('translator')->get($id, $replace, $locale);
         }));
         
         // csrf_token needs to be replaced for Laravel
