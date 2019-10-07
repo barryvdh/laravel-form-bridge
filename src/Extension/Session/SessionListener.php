@@ -14,8 +14,6 @@ use Symfony\Component\Form\FormInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
-    const UNDEFINED = '__BARRYVDH_FORMS_UNDEFINED';
-
     public static function getSubscribedEvents()
     {
         return array(
@@ -29,16 +27,20 @@ class SessionListener implements EventSubscriberInterface
         $rootName = $form->getRoot()->getName();
         $parent = $form->getParent();
 
-        if ($parent && !($parent->getConfig()->getType()->getInnerType() instanceof ChoiceType)) {
+        if (
+            $parent
+            && $form->getName() !== '_token'
+            && !($parent->getConfig()->getType()->getInnerType() instanceof ChoiceType)
+        ) {
             $name = $this->getDottedName($form);
             $fullName = $this->getFullName($rootName, $name);
 
-            $value = old($fullName, static::UNDEFINED);
+            // Get the input from the previous submit
+            $oldValue = session()->getOldInput($fullName);
+            if (! is_null($oldValue)) {
 
-            // Add input from the previous submit
-            if ($form->getName() !== '_token' && $value !== static::UNDEFINED) {
                 // Transform back to good data
-                $value = $this->transformValue($event, $value);
+                $value = $this->transformValue($event, $oldValue);
 
                 // Store on the form
                 $event->setData($value);
