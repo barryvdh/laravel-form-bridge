@@ -40,10 +40,15 @@ class SessionListener implements EventSubscriberInterface
             if (! is_null($oldValue)) {
 
                 // Transform back to good data
-                $value = $this->transformValue($event, $oldValue);
 
-                // Store on the form
-                $event->setData($value);
+                try {
+                    $value = $this->transformValue($event, $oldValue);
+
+                    // Store on the form
+                    $event->setData($value);
+                } catch (TransformationFailedException $e) {
+                    // Cannot transform the data
+                }
             }
 
             if ($errors = session('errors')) {
@@ -100,20 +105,12 @@ class SessionListener implements EventSubscriberInterface
 
         // Reverse them all..
         foreach ($config->getViewTransformers() as $transformer) {
-            try {
-                $value = $transformer->reverseTransform($value);
-            } catch (TransformationFailedException $e) {
-                //
-            }
+            $value = $transformer->reverseTransform($value);
         }
 
         // Map the models to correct values
         foreach ($config->getModelTransformers() as $transformer) {
-            try {
-                $value = $transformer->reverseTransform($value);
-            } catch (TransformationFailedException $e) {
-                //
-            }
+            $value = $transformer->reverseTransform($value);
         }
 
         return $value;
