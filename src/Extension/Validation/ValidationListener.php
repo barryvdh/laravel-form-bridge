@@ -77,7 +77,7 @@ class ValidationListener implements EventSubscriberInterface
      * @param array $rules
      * @return array
      */
-    protected function findRules(FormInterface $parent, $rules = [])
+    protected function findRules(FormInterface $parent, $rules = [], $parentName = null)
     {
         foreach ($parent->all() as $form) {
             $config = $form->getConfig();
@@ -85,11 +85,10 @@ class ValidationListener implements EventSubscriberInterface
             $innerType = $form->getConfig()->getType()->getInnerType();
 
             if ($config->hasOption('rules')) {
-                if ($innerType instanceof CollectionType) {
-                    $name .= '.*';
-                }
 
-                if (! $parent->isRoot()) {
+                if ($parentName !== null) {
+                    $name = $parentName . '.' . $name;
+                } elseif (! $parent->isRoot()) {
                     $name = $parent->getName() . '.' . $name;
                 }
 
@@ -97,7 +96,10 @@ class ValidationListener implements EventSubscriberInterface
             }
 
             if ($innerType instanceof CollectionType) {
-                $rules = $this->findRules($form, $rules);
+                $children = $form->all();
+                if(isset($children[0])) {
+                    $rules = $this->findRules($children[0], $rules, $name . '.*');
+                }
             }
         }
 
