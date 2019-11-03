@@ -14,11 +14,12 @@ use Symfony\Component\Form\FormInterface;
 
 class SessionListener implements EventSubscriberInterface
 {
+
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FormEvents::PRE_SET_DATA => 'preSet',
-        );
+        ];
     }
 
     public function preSet(FormEvent $event)
@@ -27,8 +28,7 @@ class SessionListener implements EventSubscriberInterface
         $rootName = $form->getRoot()->getName();
         $parent = $form->getParent();
 
-        if (
-            $parent
+        if ($parent
             && $form->getName() !== '_token'
             && !($parent->getConfig()->getType()->getInnerType() instanceof ChoiceType)
         ) {
@@ -37,10 +37,8 @@ class SessionListener implements EventSubscriberInterface
 
             // Get the input from the previous submit
             $oldValue = session()->getOldInput($fullName);
-            if (! is_null($oldValue)) {
-
+            if (!is_null($oldValue)) {
                 // Transform back to good data
-
                 try {
                     $value = $this->transformValue($event, $oldValue);
 
@@ -85,6 +83,7 @@ class SessionListener implements EventSubscriberInterface
     /**
      * @param FormEvent $event
      * @param mixed $value
+     *
      * @return mixed
      */
     protected function transformValue(FormEvent $event, $value)
