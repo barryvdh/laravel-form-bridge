@@ -85,7 +85,6 @@ class ValidationListener implements EventSubscriberInterface
             $innerType = $form->getConfig()->getType()->getInnerType();
 
             if ($config->hasOption('rules')) {
-
                 if ($parentName !== null) {
                     $name = $parentName . '.' . $name;
                 } elseif (! $parent->isRoot()) {
@@ -97,7 +96,7 @@ class ValidationListener implements EventSubscriberInterface
 
             if ($innerType instanceof CollectionType) {
                 $children = $form->all();
-                if(isset($children[0])) {
+                if (isset($children[0])) {
                     $rules = $this->findRules($children[0], $rules, $name . '.*');
                 }
             }
