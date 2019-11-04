@@ -32,7 +32,26 @@ class ValidationTest extends TestCase
         $this->assertTrue($form->isValid());
     }
 
-    public function testInvalidForm()
+    public function testMissingNameForm()
+    {
+        /** @var UserFormType $form */
+        $form = FormFactory::create(UserFormType::class, [])
+            ->add('save', SubmitType::class, ['label' => 'Save user']);
+
+        $request = $this->createPostRequest([
+            'user_form' => [
+                'email' => 'barry@example.com',
+                'save' => true,
+            ]
+        ]);
+
+        $form->handleRequest($request);
+
+        $this->assertTrue($form->isSubmitted());
+        $this->assertFalse($form->isValid());
+    }
+
+    public function testInvalidEmailForm()
     {
         /** @var UserFormType $form */
         $form = FormFactory::create(UserFormType::class, [])
