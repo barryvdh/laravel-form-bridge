@@ -1,4 +1,5 @@
 <?php
+namespace Barryvdh\Form\Tests;
 
 use Barryvdh\Form\ServiceProvider;
 use Orchestra\Testbench\TestCase as TestbenchTestCase;

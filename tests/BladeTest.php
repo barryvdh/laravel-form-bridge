@@ -1,6 +1,8 @@
 <?php
+namespace Barryvdh\Form\Tests;
 
 use Barryvdh\Form\Facade\FormFactory;
+use Barryvdh\Form\Tests\Types\UserFormType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -22,11 +24,7 @@ class BladeTest extends TestCase
         $app['router']->any('create', function () {
             $user = [];
 
-            $form = FormFactory::create(FormType::class, $user)
-                ->add('name', TextType::class)
-                ->add('email', EmailType::class, [
-                    'rules' => 'email',
-                ])
+            $form = FormFactory::create(UserFormType::class, $user)
                 ->add('save', SubmitType::class, ['label' => 'Save user']);
 
             $form->handleRequest();
@@ -52,7 +50,7 @@ class BladeTest extends TestCase
     {
         $crawler = $this->call('GET', 'create');
 
-        $this->assertContains('<form name="form" method="post">', $crawler->getContent());
+        $this->assertContains('<form name="user_form" method="post">', $crawler->getContent());
     }
 
     /**
@@ -63,7 +61,7 @@ class BladeTest extends TestCase
     public function testPostFormInvalid()
     {
         $crawler = $this->call('POST', 'create', [
-            'form' => ['save' => true]
+            'user_form' => ['save' => true]
         ]);
 
         $this->assertEquals('invalid', $crawler->getContent());
@@ -77,7 +75,7 @@ class BladeTest extends TestCase
     public function testPostForm()
     {
         $crawler = $this->call('POST', 'create', [
-            'form' => [
+            'user_form' => [
                 'name' => 'Barry',
                 'email' => 'barryvdh@gmail.com',
                 'save' => true
