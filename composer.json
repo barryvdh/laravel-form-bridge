@@ -11,11 +11,11 @@
     ],
     "require": {
         "php": ">=7",
-        "illuminate/support": "^5.5|^6",
-        "symfony/form": "^3.4|^4",
-        "symfony/validator": "^3|^4",
-        "symfony/twig-bridge": "^3|^4",
-        "twig/twig": "~1.30|~2.0"
+        "illuminate/support": "^5.5|^6|^7",
+        "symfony/form": "^3.4|^4|^5",
+        "symfony/validator": "^3|^4|^5",
+        "symfony/twig-bridge": "^3|^4|^5",
+        "twig/twig": "^2"
     },
     "autoload": {
         "psr-4": {
