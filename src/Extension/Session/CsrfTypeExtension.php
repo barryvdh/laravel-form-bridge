@@ -37,4 +37,12 @@ class CsrfTypeExtension extends AbstractTypeExtension
     {
         return FormType::class;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getExtendedTypes(): iterable
+    {
+        return [FormType::class];
+    }
 }
