@@ -12,7 +12,6 @@ on:
 
 jobs:
   php-tests:
-    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
