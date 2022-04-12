@@ -10,11 +10,11 @@
         }
     ],
     "require": {
-        "php": ">=7",
-        "illuminate/support": "^5.5|^6|^7|^8",
-        "symfony/form": "^3.4|^4|^5",
-        "symfony/validator": "^3|^4|^5",
-        "symfony/twig-bridge": "^3|^4|^5"
+        "php": "^7.2|^8",
+        "illuminate/support": "^6|^7|^8",
+        "symfony/form": "^4|^5|^6",
+        "symfony/validator": "^4|^5|^6",
+        "symfony/twig-bridge": "^4|^5|^6"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +38,7 @@
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^2.3",
-        "orchestra/testbench": "^3"
+        "orchestra/testbench": "^3|^4|^5|^6|^7"
     },
     "scripts": {
         "test": "phpunit",
