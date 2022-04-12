@@ -12,6 +12,7 @@ on:
 
 jobs:
   php-tests:
+    runs-on: ubuntu-20.04
     timeout-minutes: 15
     env:
       COMPOSER_NO_INTERACTION: 1
@@ -19,7 +20,7 @@ jobs:
     strategy:
       matrix:
         php: [8.1, 8.0, 7.4, 7.3]
-        laravel: [8.*, 9.*]
+        laravel: [9.*]
         dependency-version: [prefer-lowest, prefer-stable]
         exclude:
           - php: 8.0
@@ -31,6 +32,10 @@ jobs:
         include:
           - php: 7.2
             laravel: 6.*
+          - php: 7.3
+            laravel: 7.*
+          - php: 7.4
+            laravel: 8.*
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -43,8 +48,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" --no-update --no-progress
+          composer require "illuminate/support:${{ matrix.laravel }}" --no-update --no-progress
           composer update --prefer-dist --no-progress
 
       - name: Execute Unit Tests
-        run: vendor/bin phpunit
+        run: vendor/bin/phpunit
