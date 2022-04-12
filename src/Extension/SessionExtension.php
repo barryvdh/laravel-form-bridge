@@ -11,7 +11,7 @@ class SessionExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function loadTypeExtensions()
+    protected function loadTypeExtensions(): array
     {
         return array(
             new Session\CsrfTypeExtension,

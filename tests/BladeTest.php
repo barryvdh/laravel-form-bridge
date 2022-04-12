@@ -50,7 +50,7 @@ class BladeTest extends TestCase
     {
         $crawler = $this->call('GET', 'create');
 
-        $this->assertContains('<form name="user_form" method="post">', $crawler->getContent());
+        $this->assertStringContainsString('<form name="user_form" method="post">', $crawler->getContent());
     }
 
     /**

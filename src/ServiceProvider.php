@@ -39,14 +39,14 @@ class ServiceProvider extends BaseServiceProvider
         $loader = $twig->getLoader();
 
         // If the loader is not already a chain, make it one
-        if (! $loader instanceof \Twig_Loader_Chain) {
-            $loader = new \Twig_Loader_Chain([$loader]);
+        if (! $loader instanceof \Twig\Loader\ChainLoader) {
+            $loader = new \Twig\Loader\ChainLoader([$loader]);
             $twig->setLoader($loader);
         }
 
-        $loader->addLoader(new \Twig_Loader_Filesystem($this->getTemplateDirectories()));
+        $loader->addLoader(new \Twig\Loader\FilesystemLoader($this->getTemplateDirectories()));
 
-        $twig->addRuntimeLoader(new \Twig_FactoryRuntimeLoader(array(
+        $twig->addRuntimeLoader(new \Twig\RuntimeLoader\FactoryRuntimeLoader(array(
             \Symfony\Component\Form\FormRenderer::class => function () {
                 return $this->app->make(\Symfony\Component\Form\FormRenderer::class);
             }
@@ -56,7 +56,7 @@ class ServiceProvider extends BaseServiceProvider
         $twig->addExtension(new FormExtension());
 
         // trans filter is used in the forms
-        $twig->addFilter(new \Twig_SimpleFilter('trans', function ($id = null, $replace = [], $locale = null) {
+        $twig->addFilter(new \Twig\TwigFilter('trans', function ($id = null, $replace = [], $locale = null) {
             if (empty($id)) {
                 return '';
             }
@@ -64,7 +64,7 @@ class ServiceProvider extends BaseServiceProvider
         }));
         
         // csrf_token needs to be replaced for Laravel
-        $twig->addFunction(new \Twig_SimpleFunction('csrf_token', 'csrf_token'));
+        $twig->addFunction(new \Twig\TwigFunction('csrf_token', 'csrf_token'));
 
         $this->registerBladeDirectives();
         $this->registerViewComposer();
@@ -203,19 +203,19 @@ class ServiceProvider extends BaseServiceProvider
     /**
      * Get or create a new TwigEnvironment
      *
-     * @return \Twig_Environment
+     * @return \Twig\Environment
      */
     protected function getTwigEnvironment()
     {
-        if (! $this->app->bound(\Twig_Environment::class)) {
-            $this->app->singleton(\Twig_Environment::class, function () {
-                return new \Twig_Environment(new \Twig_Loader_Chain([]), [
+        if (! $this->app->bound(\Twig\Environment::class)) {
+            $this->app->singleton(\Twig\Environment::class, function () {
+                return new \Twig\Environment(new \Twig\Loader\ChainLoader([]), [
                     'cache' => storage_path('framework/views/twig'),
                 ]);
             });
         }
 
-        /** @var \Twig_Environment $twig */
-        return $this->app->make(\Twig_Environment::class);
+        /** @var \Twig\Environment $twig */
+        return $this->app->make(\Twig\Environment::class);
     }
 }
