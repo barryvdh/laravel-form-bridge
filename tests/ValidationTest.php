@@ -1,10 +1,12 @@
 <?php
 namespace Barryvdh\Form\Tests;
 
+use Barryvdh\Form\Extension\Validation\ValidationListener;
 use Barryvdh\Form\Facade\FormFactory;
 use Barryvdh\Form\Tests\Types\ParentFormType;
 use Barryvdh\Form\Tests\Types\UserFormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class ValidationTest extends TestCase
@@ -107,7 +109,11 @@ class ValidationTest extends TestCase
                     [
                         'name' => 'Bar',
                         'email' => 'bar',
-                    ]
+                    ],
+                ],
+                'emails' => [
+                    'foo',
+                    'bar@example.com',
                 ],
                 'save' => true,
             ]
@@ -117,7 +123,13 @@ class ValidationTest extends TestCase
 
         $this->assertTrue($form->isSubmitted());
         $this->assertFalse($form->isValid());
-        $this->assertEquals('The children.1.email must be a valid email address.', $form->getErrors(true)[0]->getMessage());
+
+        $this->assertEqualsCanonicalizing([
+            'The children.1.email must be a valid email address.',
+            'The emails.0 must be a valid email address.',
+        ], array_map(function($error) {
+            return $error->getMessage();
+        }, iterator_to_array($form->getErrors(true))));
     }
 
     public function testValidCollectionForm()
@@ -139,6 +151,10 @@ class ValidationTest extends TestCase
                         'email' => 'bar@example.com',
                     ]
                 ],
+                'emails' => [
+                    'foo@example.com',
+                    'bar@example.com',
+                ],
                 'save' => true,
             ]
         ]);
@@ -149,10 +165,81 @@ class ValidationTest extends TestCase
         $this->assertTrue($form->isValid());
     }
 
+    public function testFindRules() {
+        /** @var \Symfony\Component\Form\Form $form */
+        $form = FormFactory::create(ParentFormType::class, []);
+
+        $request = $this->createPostRequest([
+            'parent_form' => [
+                'name' => 'Barry',
+                'children' => [
+                    [
+                        'name' => 'Foo',
+                        'email' => 'foo@example.com',
+                    ],
+                    [
+                        'name' => 'Bar',
+                        'email' => 'bar@example.com',
+                    ]
+                ],
+                'emails' => [
+                    'foo@example.com',
+                    'bar@example.com',
+                ],
+                'save' => true,
+            ]
+        ]);
+
+        $form->handleRequest($request);
+
+        $validator = $this->app->make(TestValidationListener::class);
+        $rules = $validator->publicFindRules($form);
+
+        $this->assertSame([
+            'name' => [
+                'required',
+                'string',
+            ],
+            'children' => [
+                'required',
+                'array',
+            ],
+            'children.*' => [
+                'required',
+            ],
+            'children.*.name' => [
+                'required',
+                'string',
+            ],
+            'children.*.email' => [
+                'email',
+                'required',
+            ],
+            'emails' => [
+                'min:1',
+                'required',
+                'array',
+            ],
+            'emails.*' => [
+                'distinct',
+                'required',
+                'email',
+            ],
+        ], $rules);
+    }
+
     private function createPostRequest($data)
     {
         return new Request([], $data, [], [], [], [
             'REQUEST_METHOD' => 'POST'
         ]);
+    }
+}
+
+class TestValidationListener extends ValidationListener
+{
+    public function publicFindRules(FormInterface $parent)
+    {
+        return $this->findRules($parent);
     }
 }
