@@ -1,7 +1,12 @@
 {
     "name": "barryvdh/laravel-form-bridge",
     "description": "This packages integrates Symfony Form Component in Laravel.",
-    "keywords": ["laravel", "form", "formbuilder", "forms"],
+    "keywords": [
+        "laravel",
+        "form",
+        "formbuilder",
+        "forms"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +16,7 @@
     ],
     "require": {
         "php": "^7.2|^8",
-        "illuminate/support": "^6|^7|^8|^9",
+        "illuminate/support": "^6|^7|^8|^9|^10.0",
         "symfony/form": "^4|^5|^6",
         "symfony/validator": "^4|^5|^6",
         "symfony/twig-bridge": "^4|^5|^6",
@@ -38,8 +43,8 @@
         }
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^2.3",
-        "orchestra/testbench": "^3|^4|^5|^6|^7"
+        "squizlabs/php_codesniffer": "^2.3|^3.7",
+        "orchestra/testbench": "^3|^4|^5|^6|^7|^8.0"
     },
     "scripts": {
         "test": "phpunit",
