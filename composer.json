@@ -10,12 +10,12 @@
         }
     ],
     "require": {
-        "php": "^7.2|^8",
-        "illuminate/support": "^6|^7|^8|^9",
-        "symfony/form": "^4|^5|^6",
-        "symfony/validator": "^4|^5|^6",
-        "symfony/twig-bridge": "^4|^5|^6",
-        "twig/twig": "^2.13|^3.3.8"
+        "php": "^8",
+        "illuminate/support": "^9|^10",
+        "symfony/form": "^6",
+        "symfony/validator": "^6",
+        "symfony/twig-bridge": "^6",
+        "twig/twig": "^3.3.8"
     },
     "autoload": {
         "psr-4": {
