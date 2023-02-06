@@ -132,7 +132,7 @@ class ValidationListener implements EventSubscriberInterface
      */
     protected function addTypeRules(FormTypeInterface $type, array $rules)
     {
-        if (($type instanceof NumberType || $type instanceof IntegerType)
+        if (($type instanceof IntegerType)
             && !in_array('numeric', $rules)
         ) {
             $rules[] = 'numeric';
