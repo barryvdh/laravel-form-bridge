@@ -7,6 +7,9 @@ use Symfony\Component\Form\AbstractTypeExtension;
 
 class SessionTypeExtension extends AbstractTypeExtension
 {
+    /** @var SessionListener */
+    private $listener;
+
     /**
      * Constructor.
      *
