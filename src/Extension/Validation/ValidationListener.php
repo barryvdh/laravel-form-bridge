@@ -97,6 +97,13 @@ class ValidationListener implements EventSubscriberInterface
             if ($innerType instanceof CollectionType) {
                 $children = $form->all();
                 if (isset($children[0])) {
+                    $config = $children[0]->getConfig();
+                    $innerType = $children[0]->getConfig()->getType()->getInnerType();
+
+                    if ($config->hasOption('rules')) {
+                        $rules[$name . '.*'] = $this->addTypeRules($innerType, $config->getOption('rules'));
+                    }
+
                     $rules = $this->findRules($children[0], $rules, $name . '.*');
                 }
             }
@@ -148,6 +155,12 @@ class ValidationListener implements EventSubscriberInterface
             && !in_array('string', $rules)
         ) {
             $rules[] = 'string';
+        }
+
+        if (($type instanceof CollectionType)
+            && !in_array('array', $rules)
+        ) {
+            $rules[] = 'array';
         }
 
         return $rules;
