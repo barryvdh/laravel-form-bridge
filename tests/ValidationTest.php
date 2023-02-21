@@ -5,6 +5,7 @@ use Barryvdh\Form\Extension\Validation\ValidationListener;
 use Barryvdh\Form\Facade\FormFactory;
 use Barryvdh\Form\Tests\Types\ParentFormType;
 use Barryvdh\Form\Tests\Types\UserFormType;
+use Illuminate\Foundation\Application;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,7 +70,12 @@ class ValidationTest extends TestCase
 
         $this->assertTrue($form->isSubmitted());
         $this->assertFalse($form->isValid());
-        $this->assertEquals('The email must be a valid email address.', $form->getErrors(true)[0]->getMessage());
+
+        if (version_compare(Application::VERSION, '10', '>=')) {
+            $this->assertEquals('The email field must be a valid email address.', $form->getErrors(true)[0]->getMessage());
+        } else {
+            $this->assertEquals('The email must be a valid email address.', $form->getErrors(true)[0]->getMessage());
+        }
     }
 
     public function testEmptyCollectionForm()
@@ -124,10 +130,19 @@ class ValidationTest extends TestCase
         $this->assertTrue($form->isSubmitted());
         $this->assertFalse($form->isValid());
 
-        $this->assertEqualsCanonicalizing([
-            'The children.1.email must be a valid email address.',
-            'The emails.0 must be a valid email address.',
-        ], array_map(function($error) {
+        if (version_compare(Application::VERSION, '10', '>=')) {
+            $expected = [
+                'The children.1.email field must be a valid email address.',
+                'The emails.0 field must be a valid email address.',
+            ];
+        } else {
+            $expected = [
+                'The children.1.email must be a valid email address.',
+                'The emails.0 must be a valid email address.',
+            ];
+        }
+
+        $this->assertEqualsCanonicalizing($expected, array_map(function($error) {
             return $error->getMessage();
         }, iterator_to_array($form->getErrors(true))));
     }
