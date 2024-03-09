@@ -15,7 +15,7 @@ class BelongsToManyTransformer implements DataTransformerInterface
      *
      * @throws TransformationFailedException
      */
-    public function transform($value)
+    public function transform($value): mixed
     {
         if ($value instanceof BelongsToMany) {
             return $value->pluck($value->getOtherKey())->toArray();
@@ -24,7 +24,7 @@ class BelongsToManyTransformer implements DataTransformerInterface
         return $value;
     }
 
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         return null;
     }

@@ -15,7 +15,7 @@ class EloquentExtension extends AbstractExtension
      *
      * @return FormTypeInterface[] An array of FormTypeInterface instances
      */
-    protected function loadTypes()
+    protected function loadTypes(): array
     {
         return [
           new BelongsToManyType()
