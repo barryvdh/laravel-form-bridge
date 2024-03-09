@@ -17,7 +17,7 @@ class CsrfTypeExtension extends AbstractTypeExtension
      * @param FormInterface $form    The form
      * @param array         $options The options
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$view->parent && $options['compound']) {
             $factory = $form->getConfig()->getFormFactory();

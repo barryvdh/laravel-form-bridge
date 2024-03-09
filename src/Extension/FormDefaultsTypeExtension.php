@@ -17,7 +17,7 @@ class FormDefaultsTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         foreach ($this->defaults as $key => $default) {
             $resolver->setDefault($key, $default);
@@ -31,7 +31,7 @@ class FormDefaultsTypeExtension extends AbstractTypeExtension
     {
         return FormType::class;
     }
-    
+
     /**
      * {@inheritdoc}
      */

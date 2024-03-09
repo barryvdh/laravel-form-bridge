@@ -9,7 +9,7 @@ class HttpRequestHandler extends HttpFoundationRequestHandler implements Request
     /**
      * {@inheritdoc}
      */
-    public function handleRequest(FormInterface $form, $request = null)
+    public function handleRequest(FormInterface $form, $request = null): void
     {
         if ($request === null) {
             $request = app('request');

@@ -25,7 +25,7 @@ class ValidationTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined(array('rules'));
         $resolver->setDefault('rules', array());
@@ -63,7 +63,7 @@ class ValidationTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new ValidationListener($this->validator));
     }
@@ -71,7 +71,7 @@ class ValidationTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if (! $form->isRoot() && isset($options['rules'])) {
             $rules = $options['rules'];
