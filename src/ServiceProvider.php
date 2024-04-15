@@ -7,11 +7,14 @@ use Barryvdh\Form\Facade\FormRenderer as FormRendererFacade;
 use Illuminate\Support\Facades\Blade;
 use Barryvdh\Form\Extension\SessionExtension;
 use Illuminate\View\View;
+use Symfony\Component\Form\Extension\Core\CoreExtension;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
@@ -62,7 +65,7 @@ class ServiceProvider extends BaseServiceProvider
             }
             return app('translator')->get($id, $replace, $locale);
         }));
-        
+
         // csrf_token needs to be replaced for Laravel
         $twig->addFunction(new \Twig\TwigFunction('csrf_token', 'csrf_token'));
 
@@ -117,7 +120,14 @@ class ServiceProvider extends BaseServiceProvider
         });
 
         $this->app->singleton(FormFactory::class, function ($app) {
-            return Forms::createFormFactoryBuilder()
+
+            // Disable Invalid Property access because or how Eloquent works
+            $propertyAccess = PropertyAccess::createPropertyAccessorBuilder()
+                ->disableExceptionOnInvalidPropertyPath()
+                ->getPropertyAccessor();
+
+            return (new FormFactoryBuilder(false))
+                ->addExtension(new CoreExtension($propertyAccess))
                 ->addExtensions($app['form.extensions'])
                 ->addTypeExtensions($app['form.type.extensions'])
                 ->addTypeGuessers($app['form.type.guessers'])
