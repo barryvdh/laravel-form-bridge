@@ -14,7 +14,6 @@ use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormRendererInterface;
 use Symfony\Component\Form\Forms;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Barryvdh\Form\Extension\EloquentExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Bridge\Twig\Form\TwigRendererEngineInterface;
@@ -22,6 +21,7 @@ use Barryvdh\Form\Extension\FormValidatorExtension;
 use Symfony\Component\Form\ResolvedFormTypeFactory;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Symfony\Bridge\Twig\Extension\FormExtension;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -126,7 +126,7 @@ class ServiceProvider extends BaseServiceProvider
                 ->disableExceptionOnInvalidPropertyPath()
                 ->getPropertyAccessor();
 
-            return (new FormFactoryBuilder(false))
+            return Forms::createFormFactoryBuilder()
                 ->addExtension(new CoreExtension($propertyAccess))
                 ->addExtensions($app['form.extensions'])
                 ->addTypeExtensions($app['form.type.extensions'])
