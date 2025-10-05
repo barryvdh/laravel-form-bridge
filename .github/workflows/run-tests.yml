@@ -12,7 +12,7 @@ on:
 
 jobs:
   php-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     timeout-minutes: 15
 
@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.4, 8.3, 8.2, 8.1, 8.0]
+        php: [8.5, 8.4, 8.3, 8.2, 8.1, 8.0]
         laravel: ['9.*', '10.*', '11.*', '12.*']
         dependency-version: [prefer-lowest, prefer-stable]
         exclude:
