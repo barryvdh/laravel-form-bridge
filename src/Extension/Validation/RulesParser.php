@@ -589,6 +589,6 @@ class RulesParser
         if (strtolower($rule) == 'regex') {
             return [$parameter];
         }
-        return str_getcsv($parameter);
+        return str_getcsv($parameter, escape: '\\');
     }
 }
